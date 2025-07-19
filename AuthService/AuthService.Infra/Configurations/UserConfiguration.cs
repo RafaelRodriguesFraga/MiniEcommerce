@@ -8,6 +8,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
+        
+        builder.Ignore(entity => entity.Notifications);
+        builder.Ignore(entity => entity.Valid);
+        builder.Ignore(entity => entity.Invalid);
+        
         builder.HasKey(x => x.Id).HasName("id");
 
         builder.Property(x => x.Id)
@@ -32,11 +37,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.CreatedAt)
             .IsRequired()
+            .HasColumnType("timestamp without time zone")
             .HasColumnName("created_at");
 
         builder.Property(x => x.UpdatedAt)
             .IsRequired()
-            .HasColumnName("created_at");
+            .HasColumnType("timestamp without time zone")
+            .HasColumnName("updated_at");
 
         builder.ToTable("users");
     }
