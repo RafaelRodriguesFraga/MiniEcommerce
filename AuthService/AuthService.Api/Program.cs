@@ -1,4 +1,6 @@
 using AuthService.Application.Services;
+using AuthService.Application.Services.Token;
+using AuthService.Application.Services.User;
 using AuthService.Infra.Context;
 using AuthService.Infra.Extensions;
 using DotnetBaseKit.Components.Api;
@@ -16,7 +18,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IUserRegistrationService, UserRegistrationService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 builder.Services.AddRepositories();
 
 // BASEKIT DEPENDENCIES
