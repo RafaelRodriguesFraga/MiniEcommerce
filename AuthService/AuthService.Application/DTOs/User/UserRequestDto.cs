@@ -3,7 +3,7 @@ using DotnetBaseKit.Components.Shared.Notifications;
 
 namespace AuthService.Application.DTOs.Request;
 
-public class RegisterUserRequestDto : Notifiable<Notification>
+public class UserRequestDto : Notifiable<Notification>
 {
     public string Name { get; set; }
     public string Email { get; set; }
@@ -11,7 +11,7 @@ public class RegisterUserRequestDto : Notifiable<Notification>
 
     public void Validate()
     {
-        var validator = new RegisterUserRequestDtoContract();
+        var validator = new UserRequestDtoContract();
         var result = validator.Validate(this);
 
         if (!result.IsValid)

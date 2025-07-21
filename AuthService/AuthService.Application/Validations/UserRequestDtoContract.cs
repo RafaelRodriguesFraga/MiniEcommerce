@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace AuthService.Application.Validations;
 
-public class RegisterUserRequestDtoContract : AbstractValidator<RegisterUserRequestDto>
+public class UserRequestDtoContract : AbstractValidator<UserRequestDto>
 {
-    public RegisterUserRequestDtoContract()
+    public UserRequestDtoContract()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required");
