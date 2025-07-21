@@ -3,7 +3,7 @@ using DotnetBaseKit.Components.Domain.Sql.Repositories;
 
 namespace AuthService.Domain.Repositories;
 
-public interface IUserWriteRepository :  IBaseWriteRepository<User>
+public interface IUserReadRepository : IBaseReadRepository<User>
 {
-    
+    Task<User?> GetByEmailAsync(string email);
 }
