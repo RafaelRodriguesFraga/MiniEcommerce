@@ -1,4 +1,7 @@
+using System.Text;
+using AuthService.Api.Extensions;
 using AuthService.Application.Services;
+using AuthService.Application.Services.Auth;
 using AuthService.Application.Services.Token;
 using AuthService.Application.Services.User;
 using AuthService.Infra.Context;
@@ -18,10 +21,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserServiceApplication, UserServiceApplication>();
+builder.Services.AddScoped<ITokenServiceApplication, TokenServiceApplication>();
+builder.Services.AddScoped<IAuthServiceApplication, AuthServiceApplication>();
 
 builder.Services.AddRepositories();
+builder.Services.AddCustomSwagger();
 
 // BASEKIT DEPENDENCIES
 builder.Services.AddApi();

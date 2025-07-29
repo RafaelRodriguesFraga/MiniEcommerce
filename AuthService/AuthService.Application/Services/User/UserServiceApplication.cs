@@ -1,5 +1,4 @@
 using AuthService.Application.DTOs.Login;
-using AuthService.Application.DTOs.Request;
 using AuthService.Application.DTOs.User;
 using AuthService.Domain.Repositories;
 using DotnetBaseKit.Components.Application.Base;
@@ -7,12 +6,12 @@ using DotnetBaseKit.Components.Shared.Notifications;
 
 namespace AuthService.Application.Services.User;
 
-public class UserService : BaseServiceApplication, IUserService
+public class UserServiceApplication : BaseServiceApplication, IUserServiceApplication
 {
     private readonly IUserReadRepository _userReadRepository;
     private readonly IUserWriteRepository _writeRepository;
 
-    public UserService(NotificationContext notificationContext, IUserReadRepository userReadRepository,
+    public UserServiceApplication(NotificationContext notificationContext, IUserReadRepository userReadRepository,
         IUserWriteRepository writeRepository)
         : base(notificationContext)
     {
@@ -62,4 +61,6 @@ public class UserService : BaseServiceApplication, IUserService
 
         await _writeRepository.InsertAsync(createUser);
     }
+    
+    
 }

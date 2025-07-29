@@ -10,11 +10,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AuthService.Application.Services.Token;
 
-public class TokenService : BaseServiceApplication, ITokenService
+public class TokenServiceApplication : BaseServiceApplication, ITokenServiceApplication
 {
     private readonly IConfiguration _configuration;
 
-    public TokenService(NotificationContext notificationContext, IConfiguration configuration) : base(
+    public TokenServiceApplication(NotificationContext notificationContext, IConfiguration configuration) : base(
         notificationContext)
     {
         _configuration = configuration;
@@ -25,7 +25,11 @@ public class TokenService : BaseServiceApplication, ITokenService
         var secret = _configuration.GetSection("TokenSettings:Secret").Value;
         var expiresToken = _configuration.GetSection("TokenSettings:ExpiresToken").Value;
 
-        VerifyToken(secret, expiresToken);
+        if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(expiresToken))
+        {
+            _notificationContext.AddNotification("Token", "Token is not configured");
+            return default;
+        }
 
         var date = DateTime.Now;
 
@@ -71,7 +75,11 @@ public class TokenService : BaseServiceApplication, ITokenService
         var secret = _configuration.GetSection("TokenSettings:Secret").Value;
         var expiresToken = _configuration.GetSection("TokenSettings:ExpiresToken").Value;
 
-        VerifyToken(secret, expiresToken);
+        if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(expiresToken))
+        {
+            _notificationContext.AddNotification("Token", "Token is not configured");
+            return default;
+        }
 
         var date = DateTime.Now;
 
@@ -115,28 +123,45 @@ public class TokenService : BaseServiceApplication, ITokenService
             ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateLifetime = false
+            ValidateLifetime = false, // Permitir tokens expirados
+            ValidAlgorithms = new[] { SecurityAlgorithms.HmacSha256 },
+            CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
         };
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-        if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            // 1. Primeiro valida a estrutura básica do token
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+
+            // 2. Verifica manualmente o algoritmo
+            if (!jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
                 StringComparison.InvariantCultureIgnoreCase))
+            {
+                _notificationContext.AddNotification("Token", "Invalid token algorithm");
+                return null;
+            }
+
+            // 3. Valida a assinatura (isso vai falhar para tokens inválidos)
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+
+            return principal;
+        }
+        catch (SecurityTokenSignatureKeyNotFoundException)
+        {
+            _notificationContext.AddNotification("Token", "Invalid token signature");
+            return null;
+        }
+        catch (SecurityTokenException ex)
         {
             _notificationContext.AddNotification("Token", "Invalid token");
-            return default;
+            return null;
         }
-
-
-        return principal;
-    }
-
-    private void VerifyToken(string secret, string expiresToken)
-    {
-        if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(expiresToken))
+        catch (ArgumentException ex)
         {
-            _notificationContext.AddNotification("Token", "Token is not configured");
+            _notificationContext.AddNotification("Token", "Malformed token");
+            return null;
         }
     }
 }
