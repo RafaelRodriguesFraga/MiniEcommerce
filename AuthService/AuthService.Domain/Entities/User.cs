@@ -32,4 +32,9 @@ public class User : BaseEntity
     {
         throw new NotImplementedException();
     }
+
+    public void SetPassword(string newPassword)
+    {
+        Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+    }
 }
