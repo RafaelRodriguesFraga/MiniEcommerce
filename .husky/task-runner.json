@@ -1,0 +1,15 @@
+{
+  "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+  "tasks": [
+    {
+      "name": "validate-commit-msg",
+      "command": "bash",
+      "args": ["./scripts/validate-commit-msg.sh", "${args}"]
+    },
+    {
+      "name": "pre-push-check",
+      "command": "bash",
+      "args": ["./scripts/pre-push-check.sh"]
+    }
+  ]
+}
