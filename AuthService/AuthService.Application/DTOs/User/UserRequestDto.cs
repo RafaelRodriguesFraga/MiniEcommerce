@@ -1,7 +1,7 @@
 using AuthService.Application.Validations;
 using DotnetBaseKit.Components.Shared.Notifications;
 
-namespace AuthService.Application.DTOs.Request;
+namespace AuthService.Application.DTOs.User;
 
 public class UserRequestDto : Notifiable<Notification>
 {
