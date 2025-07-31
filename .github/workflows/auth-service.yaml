@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: authservice-artifact
-          path: auth-service/publish
+          path: AuthService/publish
 
   deploy:
     runs-on: ubuntu-latest
