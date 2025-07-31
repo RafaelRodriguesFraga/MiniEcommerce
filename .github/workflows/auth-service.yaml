@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: auth-service
+        working-directory: AuthService
 
     steps:
       - uses: actions/checkout@v4
