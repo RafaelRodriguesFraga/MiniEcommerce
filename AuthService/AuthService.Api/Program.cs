@@ -33,7 +33,7 @@ builder.Services.AddApi();
 builder.Services.AddApplication();
 builder.Services.AddRepositories();
 builder.Services.AddDbContext<AuthContext>(configuration);
- 
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -44,7 +44,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
