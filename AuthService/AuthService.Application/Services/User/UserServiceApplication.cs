@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using AuthService.Application.DTOs.Login;
 using AuthService.Application.DTOs.User;
 using AuthService.Domain.Repositories;
@@ -21,6 +22,13 @@ public class UserServiceApplication : BaseServiceApplication, IUserServiceApplic
 
     public async Task<UserResponseDto> AuthenticateAsync(LoginRequestDto requestDto)
     {
+        requestDto.Validate();
+
+        if (requestDto.Invalid)
+        {
+            _notificationContext.AddNotifications(requestDto.Notifications);
+            return default;
+        }
         var user = await _userReadRepository.GetByEmailAsync(requestDto.Email);
         var userNotFound = user == null;
         if (userNotFound)
@@ -61,6 +69,6 @@ public class UserServiceApplication : BaseServiceApplication, IUserServiceApplic
 
         await _writeRepository.InsertAsync(createUser);
     }
-    
-    
+
+
 }
