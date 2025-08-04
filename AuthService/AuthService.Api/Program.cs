@@ -15,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, log) =>
     log.ReadFrom.Configuration(ctx.Configuration).WriteTo.Console());
+
+
 var configuration = builder.Configuration;
 
 builder.Services.AddEndpointsApiExplorer();
@@ -43,6 +45,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
+app.UseHttpLoggingMiddleware();
 app.UseHttpsRedirection();
 app.MapControllers();
 
