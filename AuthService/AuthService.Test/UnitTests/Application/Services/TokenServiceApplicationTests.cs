@@ -33,16 +33,13 @@ public class TokenServiceApplicationTests
     }
 
     [Fact(DisplayName = "Should generate token with id and email")]
-    public void GenerateTokenAsync_WithValidInputs_ShouldReturnTokenDto()
+    public void Should_Generate_Token_With_Id_And_Email()
     {
-        // Arrange
         var id = Guid.NewGuid();
         var email = "user@example.com";
 
-        // Act
         var result = _service.GenerateTokenAsync(id, email);
 
-        // Assert
         Assert.NotNull(result);
         Assert.Equal(id, result.Id);
         Assert.Equal(email, result.Email);
@@ -53,80 +50,70 @@ public class TokenServiceApplicationTests
     }
 
     [Fact(DisplayName = "Should generate token from claims")]
-    public void GenerateToken_WithClaims_ShouldReturnToken()
+    public void Should_Generate_Token_From_Claims()
     {
-        // Arrange
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, "user@example.com"),
             new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
         };
 
-        // Act
         var token = _service.GenerateToken(claims);
 
-        // Assert
         Assert.False(string.IsNullOrEmpty(token));
     }
 
     [Fact(DisplayName = "Should generate a secure refresh token")]
-    public void GenerateRefreshToken_ShouldReturnSecureString()
+    public void Should_Generate_Secure_Refresh_Token()
     {
-        // Act
+
         var refreshToken = _service.GenerateRefreshToken();
 
-        // Assert
         Assert.False(string.IsNullOrEmpty(refreshToken));
-        Assert.True(refreshToken.Length > 20); // base64 of 32 bytes ≈ 44 chars
+        Assert.True(refreshToken.Length > 20);
     }
 
     [Fact(DisplayName = "Should return principal from expired token")]
-    public void GetPrincipalFromExpiredToken_WithValidToken_ShouldReturnClaimsPrincipal()
+    public void Should_Return_Principal_Form_Expired_Token()
     {
-        // Arrange
         var id = Guid.NewGuid();
         var email = "user@example.com";
         var tokenDto = _service.GenerateTokenAsync(id, email);
 
-        // Act
         var principal = _service.GetPrincipalFromExpiredToken(tokenDto.Token);
 
-        // Assert
         Assert.NotNull(principal);
         Assert.True(principal.Identity!.IsAuthenticated);
     }
 
-    [Fact]
-    public void GetPrincipalFromExpiredToken_InvalidToken_ShouldNotify()
+    [Fact(DisplayName = "Should notify invalid token when its expired or invalid")]
+    public void Should_Notify_Invalid_Token_When_Expired_Or_Invalid()
     {
-        // Arrange
         var invalidToken = GenerateInvalidJwt();
 
         _configurationMock.Setup(x => x.GetSection("TokenSettings:Secret").Value)
-            .Returns("valid-secret-key-12345"); // Diferente da chave usada para gerar o token
+            .Returns("valid-secret-key-12345");
 
         var service = new TokenServiceApplication(_notificationContext, _configurationMock.Object);
 
-        // Act
         var result = service.GetPrincipalFromExpiredToken(invalidToken);
 
-        // Assert
         Assert.Null(result);
         Assert.True(_notificationContext.HasNotifications);
         Assert.Contains(_notificationContext.Notifications, n => n.Key == "Token");
     }
 
     [Fact(DisplayName = "Should add notification when config is missing")]
-    public void GenerateTokenAsync_MissingConfig_ShouldNotify()
+    public void Shoul_Add_Notification_When_Config_Is_Missing()
     {
         var emptySection = new Mock<IConfigurationSection>();
         emptySection.Setup(x => x.Value).Returns<string?>(null);
 
         _configurationMock.Setup(x => x.GetSection("TokenSettings:Secret")).Returns(emptySection.Object);
-        _configurationMock.Setup(x => x.GetSection("TokenSettings:ExpiresToken")).Returns(emptySection.Object); 
-        
+        _configurationMock.Setup(x => x.GetSection("TokenSettings:ExpiresToken")).Returns(emptySection.Object);
+
         var result = _service.GenerateTokenAsync(Guid.NewGuid(), "email@test.com");
-        
+
         Assert.Null(result);
         Assert.True(_notificationContext.HasNotifications);
         Assert.Contains(_notificationContext.Notifications, n => n.Key == "Token");
@@ -146,14 +133,13 @@ public class TokenServiceApplicationTests
             }),
             Expires = DateTime.UtcNow.AddMinutes(5),
             SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(invalidKey), 
+                new SymmetricSecurityKey(invalidKey),
                 SecurityAlgorithms.HmacSha256Signature)
         };
 
-        // Força um kid específico
         var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
         token.Header["kid"] = "invalid-key-id";
-    
+
         return tokenHandler.WriteToken(token);
     }
 }
