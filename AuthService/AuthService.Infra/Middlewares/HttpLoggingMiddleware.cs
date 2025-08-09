@@ -10,6 +10,7 @@ namespace AuthService.Infra.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<HttpLoggingMiddleware> _logger;
+        private static readonly string[] SensitiveFields = ["password", "token", "refreshToken"];
 
         public HttpLoggingMiddleware(RequestDelegate next, ILogger<HttpLoggingMiddleware> logger)
         {
@@ -48,9 +49,9 @@ namespace AuthService.Infra.Middlewares
             var log = new
             {
                 method = request.Method,
-                path = request.Path,
+                path = request.Path.Value,
                 status = context.Response.StatusCode,
-                duration = stopwatch.ElapsedMilliseconds,
+                duration = stopwatch.ElapsedMilliseconds + "ms",
                 request = new
                 {
                     headers = request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString()),
@@ -64,32 +65,76 @@ namespace AuthService.Infra.Middlewares
                 }
             };
 
-            _logger.LogInformation("{@Log}", log);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            var formattedLog = JsonSerializer.Serialize(log, options);
+            _logger.LogInformation("{Log}", formattedLog);
 
             await newResponseBody.CopyToAsync(responseBody);
         }
 
-        private object TryParseJson(string body)
+        private object TryParseJson(string json)
         {
-            if (string.IsNullOrWhiteSpace(body))
-            {
+            if (string.IsNullOrWhiteSpace(json))
                 return null;
-            }
 
             try
             {
-                var jsonSerializer = JsonSerializer.Deserialize<object>(body, new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
+                using var doc = JsonDocument.Parse(json);
 
-                return jsonSerializer;
+                return ConvertJsonToObject(doc.RootElement);
             }
             catch
             {
-
-                return body;
+                return json;
             }
         }
+
+        // TODO: IMPROVE LOG CODE
+        private object ConvertJsonToObject(JsonElement element)
+        {
+            switch (element.ValueKind)
+            {
+                case JsonValueKind.Object:
+                    var dict = new Dictionary<string, object>();
+
+                    foreach (var prop in element.EnumerateObject())
+                    {
+                        dict[prop.Name] = SensitiveFields.Contains(prop.Name, StringComparer.OrdinalIgnoreCase) ? "*****" : ConvertJsonToObject(prop.Value);
+                    }
+                    return dict;
+
+                case JsonValueKind.Array:
+                    return element.EnumerateArray()
+                                  .Select(ConvertJsonToObject)
+                                  .ToList();
+
+                case JsonValueKind.String:
+                    return element.GetString();
+
+                case JsonValueKind.Number:
+                    if (element.TryGetInt32(out int intValue))
+                        return intValue;
+                    if (element.TryGetInt64(out long longValue))
+                        return longValue;
+                    return element.GetDecimal();
+
+                case JsonValueKind.True:
+                    return true;
+
+                case JsonValueKind.False:
+                    return false;
+
+                case JsonValueKind.Null:
+                    return null;
+
+                default:
+                    return null;
+            }
+        }
+
     }
 }

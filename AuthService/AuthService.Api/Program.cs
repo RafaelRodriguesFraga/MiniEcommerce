@@ -9,13 +9,8 @@ using AuthService.Infra.Extensions;
 using DotnetBaseKit.Components.Api;
 using DotnetBaseKit.Components.Application;
 using DotnetBaseKit.Components.Infra.Sql;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Host.UseSerilog((ctx, log) =>
-    log.ReadFrom.Configuration(ctx.Configuration).WriteTo.Console());
-
 
 var configuration = builder.Configuration;
 
@@ -44,7 +39,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseSerilogRequestLogging();
 app.UseHttpLoggingMiddleware();
 app.UseHttpsRedirection();
 app.MapControllers();

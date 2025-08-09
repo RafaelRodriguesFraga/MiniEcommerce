@@ -71,7 +71,7 @@ public class TokenServiceApplicationTests
         var refreshToken = _service.GenerateRefreshToken();
 
         Assert.False(string.IsNullOrEmpty(refreshToken));
-        Assert.True(refreshToken.Length > 20); // base64 of 32 bytes ≈ 44 chars
+        Assert.True(refreshToken.Length > 20);
     }
 
     [Fact(DisplayName = "Should return principal from expired token")]
@@ -93,7 +93,7 @@ public class TokenServiceApplicationTests
         var invalidToken = GenerateInvalidJwt();
 
         _configurationMock.Setup(x => x.GetSection("TokenSettings:Secret").Value)
-            .Returns("valid-secret-key-12345"); // Diferente da chave usada para gerar o token
+            .Returns("valid-secret-key-12345");
 
         var service = new TokenServiceApplication(_notificationContext, _configurationMock.Object);
 
