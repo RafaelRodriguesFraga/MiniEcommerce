@@ -1,3 +1,5 @@
+
+# AuthService .gitignore file
 AuthService/.idea/.idea.AuthService/.idea/.gitignore
 AuthService/.idea/.idea.AuthService/.idea/encodings.xml
 AuthService/.idea/.idea.AuthService/.idea/indexLayout.xml
@@ -17,3 +19,26 @@ AuthService/AuthService.Shared/obj
 AuthService/AuthService.Test/bin
 AuthService/AuthService.Test/obj
 AuthService/AuthService.sln.DotSettings.user
+
+#UserService .gitignore file
+UserService/.idea/.idea.UserService/.idea/.gitignore
+UserService/.idea/.idea.UserService/.idea/encodings.xml
+UserService/.idea/.idea.UserService/.idea/indexLayout.xml
+UserService/.idea/.idea.UserService/.idea/vcs.xml
+UserService/UserService.Api/bin
+UserService/UserService.Api/obj
+UserService/UserService.Api/appsettings.json
+UserService/UserService.Api/appsettings.Development.json
+UserService/UserService.Application/bin
+UserService/UserService.Application/obj
+UserService/UserService.Domain/bin
+UserService/UserService.Domain/obj
+UserService/UserService.Infra/bin
+UserService/UserService.Infra/obj
+UserService/UserService.Infra.CrossCutting/bin
+UserService/UserService.Infra.CrossCutting/obj
+UserService/UserService.Shared/bin
+UserService/UserService.Shared/obj
+UserService/UserService.Tests/bin
+UserService/UserService.Tests/obj
+UserService/UserService.sln.DotSettings.user
