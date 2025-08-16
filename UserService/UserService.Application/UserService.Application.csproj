@@ -6,4 +6,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="DotnetBaseKit.Components.Application" Version="3.1.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\UserService.Domain\UserService.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
