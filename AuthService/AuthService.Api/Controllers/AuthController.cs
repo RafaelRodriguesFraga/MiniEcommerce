@@ -51,7 +51,7 @@ public class AuthController : ApiControllerBase
             return ResponseBadRequest(authenticateUser);
         }
 
-        var token = _tokenServiceApplication.GenerateTokenAsync(authenticateUser!.Id, authenticateUser.Email);
+        var token = _tokenServiceApplication.GenerateTokenAsync(authenticateUser!.Id, authenticateUser.Email, authenticateUser.Name);
 
         return ResponseOk(token);
     }

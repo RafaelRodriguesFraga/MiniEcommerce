@@ -6,7 +6,7 @@ namespace AuthService.Application.Services.Token;
 
 public interface ITokenServiceApplication : IBaseServiceApplication
 {
-    TokenDto GenerateTokenAsync(Guid id, string email);
+    TokenDto GenerateTokenAsync(Guid id, string email, string name);
     string GenerateToken(IEnumerable<Claim> claims);
 
     string GenerateRefreshToken();

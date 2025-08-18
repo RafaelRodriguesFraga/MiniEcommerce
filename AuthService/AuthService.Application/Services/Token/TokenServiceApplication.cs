@@ -20,7 +20,7 @@ public class TokenServiceApplication : BaseServiceApplication, ITokenServiceAppl
         _configuration = configuration;
     }
 
-    public TokenDto GenerateTokenAsync(Guid id, string email)
+    public TokenDto GenerateTokenAsync(Guid id, string email, string name)
     {
         var secret = _configuration.GetSection("TokenSettings:Secret").Value;
         var expiresToken = _configuration.GetSection("TokenSettings:ExpiresToken").Value;
@@ -44,6 +44,7 @@ public class TokenServiceApplication : BaseServiceApplication, ITokenServiceAppl
             Subject = new ClaimsIdentity(new Claim[]
             {
                 new Claim(JwtRegisteredClaimNames.Email, email),
+                new Claim(JwtRegisteredClaimNames.Name, name),
                 new Claim(ClaimTypes.NameIdentifier, id.ToString()),
             }),
             SigningCredentials = new SigningCredentials(
@@ -132,10 +133,8 @@ public class TokenServiceApplication : BaseServiceApplication, ITokenServiceAppl
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            // 1. Primeiro valida a estrutura básica do token
             var jwtToken = tokenHandler.ReadJwtToken(token);
 
-            // 2. Verifica manualmente o algoritmo
             if (!jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
                 StringComparison.InvariantCultureIgnoreCase))
             {
@@ -143,7 +142,6 @@ public class TokenServiceApplication : BaseServiceApplication, ITokenServiceAppl
                 return null;
             }
 
-            // 3. Valida a assinatura (isso vai falhar para tokens inválidos)
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
 
             return principal;
