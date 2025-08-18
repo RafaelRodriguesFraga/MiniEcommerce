@@ -4,6 +4,10 @@ namespace UserService.Domain.Entities;
 
 public class UserProfile : BaseEntity
 {
+    public UserProfile()
+    {
+        
+    }
     public UserProfile(Guid userId, string name, string email, string avatarUrl)
     {
         UserId = userId;
