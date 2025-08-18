@@ -6,7 +6,7 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserProfileServiceApplication, UserProfileProfileServiceApplication>();
+        services.AddScoped<IUserProfileServiceApplication, UserProfileServiceApplication>();
         return services;
     }
 }
