@@ -35,6 +35,7 @@
     <ItemGroup>
       <ProjectReference Include="..\UserService.Application\UserService.Application.csproj" />
       <ProjectReference Include="..\UserService.Infra\UserService.Infra.csproj" />
+      <ProjectReference Include="..\UserService.Shared\UserService.Shared.csproj" />
     </ItemGroup>
 
 </Project>
