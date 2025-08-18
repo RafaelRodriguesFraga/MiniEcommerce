@@ -11,7 +11,7 @@ public class UserProfileServiceApplication : BaseServiceApplication, IUserProfil
     private readonly IUserProfileReadRepository _userProfileReadRepository;
     private readonly IUserProfileWriteRepository _userProfileWriteRepository;
 
-    
+
     public UserProfileServiceApplication(NotificationContext notificationContext, IUserProfileReadRepository userProfileReadRepository, IUserProfileWriteRepository userProfileWriteRepository) : base(notificationContext)
     {
         _userProfileReadRepository = userProfileReadRepository;
@@ -23,28 +23,27 @@ public class UserProfileServiceApplication : BaseServiceApplication, IUserProfil
         var user = await _userProfileReadRepository.GetByUserIdAsync(id);
         if (user == null)
         {
-            _notificationContext.AddNotification("User", "User not found");
-            return default;
+            return {};
         }
-        
+
         return user.ToDto();
     }
 
-    public async Task<UserProfileResponseDto> CreateAsync(UserProfileRequestDto dto, Guid userId)
+    public async Task<UserProfileResponseDto> CreateAsync(UserProfileRequestDto dto, Guid userId, string userName, string userEmail)
     {
         // TODO: validation here
 
-        var userProfile = dto.ToEntity(userId);
+        var userProfile = dto.ToEntity(userId, userName, userEmail);
 
         await _userProfileWriteRepository.InsertAsync(userProfile);
-        
+
         return userProfile.ToDto();
     }
 
     public Task<UserProfileResponseDto> UpdateAsync(Guid id, UserProfileRequestDto dto)
     {
         // TODO: validation here
-        
-        return default;
+
+        return default!;
     }
 }

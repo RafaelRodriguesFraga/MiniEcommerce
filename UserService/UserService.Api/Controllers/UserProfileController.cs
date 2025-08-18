@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DotnetBaseKit.Components.Api.Base;
 using DotnetBaseKit.Components.Api.Responses;
@@ -37,14 +38,17 @@ public class UserProfileController : ApiControllerBase
     public async Task<IActionResult> CreateAsync([FromBody] UserProfileRequestDto dto)
     {
         var userId = GetUserId();
-        
-        var result = await _userProfileServiceApplication.CreateAsync(dto, userId);
+        var userName = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Name)?.Value;
+        var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
+
+
+        var result = await _userProfileServiceApplication.CreateAsync(dto, userId, userName!, userEmail!);
 
         return ResponseCreated(result);
     }
 
     private Guid GetUserId()
     {
-        return (Guid) HttpContext.Items["UserId"]!;
+        return (Guid)HttpContext.Items["UserId"]!;
     }
 }
