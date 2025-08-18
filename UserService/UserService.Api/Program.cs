@@ -1,7 +1,10 @@
+using System.Reflection;
+using System.Text;
 using DotnetBaseKit.Components.Api;
 using DotnetBaseKit.Components.Application;
 using DotnetBaseKit.Components.Infra.Sql;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using UserService.Application.Extensions;
 using UserService.Infra.Context;
 using UserService.Infra.Extensions;
@@ -10,7 +13,44 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "User Service Api", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description =
+            "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below. \r\n\r\nExample: \"Bearer 12345abcdef\"",
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
+
 builder.Services.AddControllers();
 builder.Services.AddRepositories();
 builder.Services.AddApplicationServices();
@@ -19,20 +59,22 @@ builder.Services.AddApplicationServices();
 builder.Services.AddApi();
 builder.Services.AddApplication();
 
+// PROJECT DEPENDENCIES
 builder.Services.AddDbContext<UserContext>(configuration);
+builder.Services.AddRepositories();
+builder.Services.AddApplicationServices();
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.RequireHttpsMetadata = false;
-        options.Authority = "http://localhost:5194"; // URL do AuthService
+        var secret = builder.Configuration.GetSection("TokenSettings:Secret").Value;
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = false,
-            ValidateIssuer = true,
-            ValidIssuer = "MiniEcommerce.AuthService",
+            ValidateIssuer = false,      // você não está setando issuer no AuthService
+            ValidateAudience = false,    // idem para audience
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret))
         };
     });
 
