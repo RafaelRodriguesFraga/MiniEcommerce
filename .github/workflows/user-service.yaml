@@ -10,7 +10,7 @@ on:
 
 jobs:
   call-template:
-    uses: ./.github/workflows/templates/service-ci-template.yml
+    uses: ./.github/workflows/service-ci-template.yml
     with:
       service-name: UserService
       service-path: UserService
