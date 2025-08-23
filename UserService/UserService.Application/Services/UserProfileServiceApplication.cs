@@ -23,7 +23,7 @@ public class UserProfileServiceApplication : BaseServiceApplication, IUserProfil
         var user = await _userProfileReadRepository.GetByUserIdAsync(id);
         if (user == null)
         {
-            return {};
+            return null!;
         }
 
         return user.ToDto();
@@ -31,7 +31,13 @@ public class UserProfileServiceApplication : BaseServiceApplication, IUserProfil
 
     public async Task<UserProfileResponseDto> CreateAsync(UserProfileRequestDto dto, Guid userId, string userName, string userEmail)
     {
-        // TODO: validation here
+        dto.Validate();
+
+        if (dto.Invalid)
+        {
+            _notificationContext.AddNotifications(dto.Notifications);
+            return default!;
+        }
 
         var userProfile = dto.ToEntity(userId, userName, userEmail);
 
@@ -40,10 +46,19 @@ public class UserProfileServiceApplication : BaseServiceApplication, IUserProfil
         return userProfile.ToDto();
     }
 
-    public Task<UserProfileResponseDto> UpdateAsync(Guid id, UserProfileRequestDto dto)
+    public async Task<UserProfileResponseDto> UpdateAsync(Guid id, UserProfileUpdateDto dto)
     {
-        // TODO: validation here
+        var userProfile = await _userProfileReadRepository.GetByUserIdAsync(id);
+        if (userProfile == null)
+        {
+            _notificationContext.AddNotification("User", "User Not found");
+            return default!;
+        }
 
-        return default!;
+        userProfile.Update(dto.Name, dto.Email, dto.AvatarUrl);
+
+        await _userProfileWriteRepository.UpdateAsync(userProfile);
+
+        return userProfile.ToDto();
     }
 }

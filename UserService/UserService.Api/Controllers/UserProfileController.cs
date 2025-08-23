@@ -47,6 +47,15 @@ public class UserProfileController : ApiControllerBase
         return ResponseCreated(result);
     }
 
+    [HttpPatch]
+    public async Task<IActionResult> UpdateAsync([FromBody] UserProfileUpdateDto dto)
+    {
+        var userId = GetUserId();
+        var result = await _userProfileServiceApplication.UpdateAsync(userId, dto);
+
+        return ResponseOk(result);
+    }
+
     private Guid GetUserId()
     {
         return (Guid)HttpContext.Items["UserId"]!;
