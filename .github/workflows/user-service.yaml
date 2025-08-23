@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'UserService/**'
+      - 'MiniEcommerce/UserService/**'
   workflow_dispatch:
 
 jobs:
