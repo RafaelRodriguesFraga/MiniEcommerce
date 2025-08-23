@@ -1,16 +1,16 @@
-name: Deploy AuthService
+name: Deploy UserService
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'AuthService/**'
+      - 'UserService/**'
   workflow_dispatch:
 
 jobs:
   call-template:
     uses: ./.github/workflows/templates/service-ci-template.yml
     with:
-      service-name: AuthService
-      service-path: AuthService
+      service-name: UserService
+      service-path: UserService
