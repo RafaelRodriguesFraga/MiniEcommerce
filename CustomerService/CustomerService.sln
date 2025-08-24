@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CustomerService.Tests", "Cu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerService.Tests", "CustomerService.Tests\CustomerService.Tests.csproj", "{15CBFF64-D7B6-4C89-B364-28C3F6F6107E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6 - Tests", "6 - Tests", "{9AF27B89-CC06-4793-B0CB-C0043304B0DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,7 @@ Global
 		{76B26D8E-255B-46B0-8870-BA74DEB3B080} = {446CE6B2-B761-4725-860B-BF33E1F8BFC8}
 		{C85833CC-B342-41FE-8896-09F625ED26B1} = {70565823-161C-4296-A8ED-9BAABEEF7D98}
 		{15CBFF64-D7B6-4C89-B364-28C3F6F6107E} = {87F23480-F2ED-492C-B31F-B650D867AA62}
+		{87F23480-F2ED-492C-B31F-B650D867AA62} = {9AF27B89-CC06-4793-B0CB-C0043304B0DE}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{84CCBDEE-80A4-48A7-A8EA-98C464602E7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
