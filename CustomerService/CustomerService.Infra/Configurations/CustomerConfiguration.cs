@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using CustomerService.Domain.Entities;
-
 namespace CustomerService.Infra.Configurations;
 
 public class CustomerConfiguration : IEntityTypeConfiguration<Customer>

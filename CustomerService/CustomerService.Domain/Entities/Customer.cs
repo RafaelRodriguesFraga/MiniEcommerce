@@ -23,6 +23,7 @@ public class Customer : BaseEntity
     public string Email { get; set; }
     public string AvatarUrl { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public List<Address> Addresses = new List<Address>();
 
     public override void Validate()
     {

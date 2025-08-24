@@ -1,6 +1,4 @@
-using DotnetBaseKit.Components.Infra.Sql.Context.Base;
 using DotnetBaseKit.Components.Shared.Notifications;
-using Microsoft.EntityFrameworkCore;
 using CustomerService.Infra.Configurations;
 
 namespace CustomerService.Infra.Context
@@ -18,6 +16,7 @@ namespace CustomerService.Infra.Context
             modelBuilder.Ignore<Notification>();    
 
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
+            modelBuilder.ApplyConfiguration(new AddressConfiguration());
         }
     }
 }
