@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using DotnetBaseKit.Components.Shared.Notifications;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -16,12 +18,27 @@ namespace CustomerService.Tests.UnitTests.Application.Services
         private readonly CustomerServiceApplication _service;
         private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
 
-        public CustomerServiceApplicationTests(IHttpContextAccessor httpContextAccessor)
+        public CustomerServiceApplicationTests()
         {
             _readRepositoryMock = new Mock<ICustomerReadRepository>();
             _writeRepositoryMock = new Mock<ICustomerWriteRepository>();
             _notificationContext = new NotificationContext();
             _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Name, "Test User"),
+                new Claim(ClaimTypes.Email, "test@example.com")
+            };
+
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            var httpContext = new DefaultHttpContext
+            {
+                User = claimsPrincipal
+            };
+
+            _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
 
             _service = new CustomerServiceApplication(
                 _notificationContext,
@@ -31,15 +48,15 @@ namespace CustomerService.Tests.UnitTests.Application.Services
             );
         }
 
-        [Fact(DisplayName = "Should Return Null When User Profile Not Found")]
-        public async Task Should_Return_Null_When_Customer_NotFound()
+        [Fact(DisplayName = "Should Create Customer When User Not Found")]
+        public async Task Should_Create_Customer_When_User_Not_Found()
         {
             var userId = Guid.NewGuid();
             _readRepositoryMock.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync((Customer?)null);
 
             var result = await _service.GetByUserIdAsync(userId);
 
-            Assert.Null(result);
+            Assert.NotNull(result);
         }
 
         [Fact(DisplayName = "Should Add Notification When User Not Found On Update")]
