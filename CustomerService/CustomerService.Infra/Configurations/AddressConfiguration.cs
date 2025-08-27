@@ -2,13 +2,13 @@ namespace CustomerService.Infra.Configurations;
 
 public class AddressConfiguration : IEntityTypeConfiguration<Address>
 {
-    public void Configure(EntityTypeBuilder<Address> builder)
+    public void Configure(EntityTypeBuilder<AddressEntity> builder)
     {
         builder.Ignore(entity => entity.Notifications);
         builder.Ignore(entity => entity.Valid);
         builder.Ignore(entity => entity.Invalid);
 
-        builder.HasKey(x => x.Id).HasName("id");
+        builder.HasKey(x => x.Id).HasName("PK_Address");
 
         builder.Property(x => x.Id)
             .IsRequired()
@@ -62,7 +62,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .IsRequired()
             .HasColumnType("timestamp without time zone")
             .HasColumnName("updated_at");
-        
+
         builder.HasOne(address => address.Customer)
             .WithMany(customer => customer.Addresses)
             .HasForeignKey(address => address.CustomerId)

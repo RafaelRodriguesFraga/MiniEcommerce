@@ -8,7 +8,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Ignore(entity => entity.Valid);
         builder.Ignore(entity => entity.Invalid);
 
-        builder.HasKey(x => x.Id).HasName("id");
+        builder.HasKey(x => x.Id).HasName("PK_Customers");
 
         builder.Property(x => x.Id)
             .IsRequired()
