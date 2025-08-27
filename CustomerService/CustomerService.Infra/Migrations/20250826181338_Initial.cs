@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CustomerService.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial_Customer : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,7 +25,7 @@ namespace CustomerService.Infra.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("id", x => x.id);
+                    table.PrimaryKey("PK_Customers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -46,7 +46,7 @@ namespace CustomerService.Infra.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("id", x => x.id);
+                    table.PrimaryKey("PK_Address", x => x.id);
                     table.ForeignKey(
                         name: "FK_addresses_customers_customer_id",
                         column: x => x.customer_id,

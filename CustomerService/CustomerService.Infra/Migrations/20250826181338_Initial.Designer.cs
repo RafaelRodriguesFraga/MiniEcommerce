@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CustomerService.Infra.Migrations
 {
     [DbContext(typeof(CustomerContext))]
-    [Migration("20250824173014_Initial_Customer")]
-    partial class Initial_Customer
+    [Migration("20250826181338_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,7 +86,7 @@ namespace CustomerService.Infra.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("id");
+                        .HasName("PK_Address");
 
                     b.HasIndex("CustomerId");
 
@@ -129,7 +129,7 @@ namespace CustomerService.Infra.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("id");
+                        .HasName("PK_Customers");
 
                     b.HasIndex("Email");
 

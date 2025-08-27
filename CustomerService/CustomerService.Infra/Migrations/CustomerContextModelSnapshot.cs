@@ -83,7 +83,7 @@ namespace CustomerService.Infra.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("id");
+                        .HasName("PK_Address");
 
                     b.HasIndex("CustomerId");
 
@@ -126,7 +126,7 @@ namespace CustomerService.Infra.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id")
-                        .HasName("id");
+                        .HasName("PK_Customers");
 
                     b.HasIndex("Email");
 
