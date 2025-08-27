@@ -5,4 +5,5 @@ namespace CustomerService.Domain.Repositories.Address;
 
 public interface IAddressReadRepository : IBaseReadRepository<AddressEntity>
 {
+    Task<IEnumerable<AddressEntity>> GetByCustomerIdAsync(Guid customerId);
 }
