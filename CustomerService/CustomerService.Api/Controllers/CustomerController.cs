@@ -10,7 +10,7 @@ using CustomerService.Shared.Filters;
 
 namespace CustomerService.Api.Controllers;
 
-[Route("api/user-profile")]
+[Route("api/customers")]
 [Authorize(AuthenticationSchemes = "Bearer")]
 [ApiController]
 [RequireUserId]
@@ -25,7 +25,7 @@ public class CustomerController : ApiControllerBase
         _CustomerServiceApplication = CustomerServiceApplication;
     }
 
-    [HttpGet("me")]
+    [HttpGet]
     public async Task<IActionResult> GetMeAsync()
     {
         var userId = GetUserId();
