@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using CustomerService.Application;
 using CustomerService.Application.DTOs;
 using CustomerService.Shared.Filters;
+using CustomerService.Api.Documentation.Config;
+using CustomerService.Api.Documentation.Docs;
+using CustomerService.Api.Documentation.Docs.Keys;
 
 namespace CustomerService.Api.Controllers;
 
@@ -25,7 +28,8 @@ public class CustomerController : ApiControllerBase
         _CustomerServiceApplication = CustomerServiceApplication;
     }
 
-    [HttpGet]
+    [HttpGet("/me")]
+    [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.GetMe))]
     public async Task<IActionResult> GetMeAsync()
     {
         var userId = GetUserId();
@@ -35,6 +39,7 @@ public class CustomerController : ApiControllerBase
     }
 
     [HttpPost]
+    [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.Create))]
     public async Task<IActionResult> CreateAsync([FromBody] CustomerRequestDto dto)
     {
         var userId = GetUserId();
@@ -48,6 +53,7 @@ public class CustomerController : ApiControllerBase
     }
 
     [HttpPatch]
+    [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.Update))]
     public async Task<IActionResult> UpdateAsync([FromBody] CustomerUpdateDto dto)
     {
         var userId = GetUserId();

@@ -1,3 +1,6 @@
+using CustomerService.Api.Documentation.Config;
+using CustomerService.Api.Documentation.Docs;
+using CustomerService.Api.Documentation.Docs.Keys;
 using CustomerService.Application.Address;
 using CustomerService.Application.DTOs.Address;
 using DotnetBaseKit.Components.Api.Base;
@@ -19,6 +22,7 @@ public class AddressController : ApiControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [SwaggerDocumentation(typeof(AddressDocs), nameof(AddressDocKey.GetById))]
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var address = await _serviceApplication.GetByIdAsync(id);
@@ -27,6 +31,7 @@ public class AddressController : ApiControllerBase
     }
 
     [HttpGet("customer/{customerId:guid}")]
+    [SwaggerDocumentation(typeof(AddressDocs), nameof(AddressDocKey.GetAllByCustomerId))]
     public async Task<IActionResult> GetByCustomerIdAsync(Guid customerId)
     {
         var addresses = await _serviceApplication.GetByCustomerIdAsync(customerId);
@@ -35,6 +40,7 @@ public class AddressController : ApiControllerBase
     }
 
     [HttpPost]
+    [SwaggerDocumentation(typeof(AddressDocs), nameof(AddressDocKey.GetAllByCustomerId))]
     public async Task<IActionResult> CreateAsync([FromBody] AddressRequestDto request)
     {
 
@@ -44,15 +50,17 @@ public class AddressController : ApiControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [SwaggerDocumentation(typeof(AddressDocs), nameof(AddressDocKey.Update))]
     public async Task<IActionResult> Update(Guid id, [FromBody] AddressUpdateDto request)
     {
 
         await _serviceApplication.UpdateAsync(id, request);
 
-        return CreateResponse(); 
+        return CreateResponse();
     }
 
     [HttpDelete("{id:guid}")]
+    [SwaggerDocumentation(typeof(AddressDocs), nameof(AddressDocKey.Delete))]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _serviceApplication.DeleteAsync(id);

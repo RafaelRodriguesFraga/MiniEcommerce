@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using CustomerService.Application.Extensions;
 using CustomerService.Infra.Context;
 using CustomerService.Infra.Extensions;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -15,7 +16,7 @@ var configuration = builder.Configuration;
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "User Service Api", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MiniEcommerce - UserServiceApi", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
@@ -49,6 +50,8 @@ builder.Services.AddSwaggerGen(c =>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
+
+    c.OperationFilter<SwaggerDocumentationOperationFilter>();
 });
 
 builder.Services.AddControllers();
