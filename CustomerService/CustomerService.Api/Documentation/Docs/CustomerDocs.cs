@@ -1,5 +1,4 @@
-
-using CustomerService.Api.Documentation.Config;
+using CustomerService.Api.Documentation.Configuration;
 using CustomerService.Api.Documentation.Docs.Keys;
 using CustomerService.Application.DTOs;
 using DotnetBaseKit.Components.Api.Responses;
@@ -10,7 +9,7 @@ public class CustomerDocs : BaseDoc<CustomerDocKey>
 {
     static CustomerDocs()
     {
-        Docs[CustomerDocKey.GetMe] = new ApiDocInfo(
+        Docs[CustomerDocKey.GetMe] = new SwaggerDocumentationInfo(
            summary: "Get the logged user data",
            description: "Returns the details of the customer associated to the logged user")
         {
@@ -22,7 +21,7 @@ public class CustomerDocs : BaseDoc<CustomerDocKey>
            }
         };
 
-        Docs[CustomerDocKey.Create] = new ApiDocInfo(
+        Docs[CustomerDocKey.Create] = new SwaggerDocumentationInfo(
              summary: "Creates a new customer",
              description: "Creates a customer associated with the logged-in user using the provided information")
         {
@@ -35,7 +34,7 @@ public class CustomerDocs : BaseDoc<CustomerDocKey>
             }
         };
 
-        Docs[CustomerDocKey.Update] = new ApiDocInfo(
+        Docs[CustomerDocKey.Update] = new SwaggerDocumentationInfo(
              summary: "Updates a new customer",
              description: "Updates a customer")
         {

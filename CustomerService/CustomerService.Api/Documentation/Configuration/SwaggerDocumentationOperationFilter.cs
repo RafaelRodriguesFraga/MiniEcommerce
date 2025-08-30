@@ -1,10 +1,11 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using CustomerService.Api.Documentation.Config;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen; // Necessário para Reflection
+using Swashbuckle.AspNetCore.SwaggerGen;
+
+namespace CustomerService.Api.Documentation.Configuration;
 
 public class SwaggerDocumentationOperationFilter : IOperationFilter
 {
@@ -41,7 +42,7 @@ public class SwaggerDocumentationOperationFilter : IOperationFilter
 
         var enumKey = Enum.Parse(parameterType, apiDocAttribute.Key, true);
 
-        var apiDoc = (ApiDocInfo)getMethod.Invoke(null, new object[] { enumKey })!;
+        var apiDoc = (SwaggerDocumentationInfo)getMethod.Invoke(null, new object[] { enumKey })!;
 
         operation.Summary = apiDoc.Summary;
         operation.Description = apiDoc.Description;

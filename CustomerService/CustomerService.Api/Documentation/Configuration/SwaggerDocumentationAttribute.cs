@@ -1,6 +1,6 @@
 
 
-namespace CustomerService.Api.Documentation.Config;
+namespace CustomerService.Api.Documentation.Configuration;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 public class SwaggerDocumentationAttribute : Attribute
