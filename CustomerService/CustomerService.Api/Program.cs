@@ -9,6 +9,7 @@ using CustomerService.Application.Extensions;
 using CustomerService.Infra.Context;
 using CustomerService.Infra.Extensions;
 using System.Text.Json;
+using CustomerService.Api.Documentation.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;

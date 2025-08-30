@@ -1,4 +1,4 @@
-using CustomerService.Api.Documentation.Config;
+using CustomerService.Api.Documentation.Configuration;
 using CustomerService.Api.Documentation.Docs;
 using CustomerService.Api.Documentation.Docs.Keys;
 using CustomerService.Application.Address;
