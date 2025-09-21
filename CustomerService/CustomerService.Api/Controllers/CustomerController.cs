@@ -19,21 +19,21 @@ namespace CustomerService.Api.Controllers;
 [RequireUserId]
 public class CustomerController : ApiControllerBase
 {
-    private readonly ICustomerServiceApplication _CustomerServiceApplication;
+    private readonly ICustomerServiceApplication _customerServiceApplication;
 
     public CustomerController(IResponseFactory responseFactory,
-        ICustomerServiceApplication CustomerServiceApplication) : base(
+        ICustomerServiceApplication customerServiceApplication) : base(
         responseFactory)
     {
-        _CustomerServiceApplication = CustomerServiceApplication;
+        _customerServiceApplication = customerServiceApplication;
     }
 
     [HttpGet("/me")]
     [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.GetMe))]
     public async Task<IActionResult> GetMeAsync()
     {
-        var userId = GetUserId();
-        var result = await _CustomerServiceApplication.GetByUserIdAsync(userId);
+        var userId = GetAuthServiceId();
+        var result = await _customerServiceApplication.GetByUserIdAsync(userId);
 
         return ResponseOk(result);
     }
@@ -42,27 +42,26 @@ public class CustomerController : ApiControllerBase
     [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.Create))]
     public async Task<IActionResult> CreateAsync([FromBody] CustomerRequestDto dto)
     {
-        var userId = GetUserId();
+        var userId = GetAuthServiceId();
         var userName = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Name)?.Value;
         var userEmail = HttpContext.User.FindFirst(ClaimTypes.Email)?.Value;
 
 
-        var result = await _CustomerServiceApplication.CreateAsync(dto, userId, userName!, userEmail!);
+        var result = await _customerServiceApplication.CreateAsync(dto, userId, userName!, userEmail!);
 
         return ResponseCreated(result);
     }
 
-    [HttpPatch]
-    [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.Update))]
-    public async Task<IActionResult> UpdateAsync([FromBody] CustomerUpdateDto dto)
+    [HttpPatch("{customerId:guid}")]    [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.Update))]
+    public async Task<IActionResult> UpdateAsync([FromRoute] Guid customerId, [FromBody] CustomerUpdateDto dto)
     {
-        var userId = GetUserId();
-        var result = await _CustomerServiceApplication.UpdateAsync(userId, dto);
+        var authServiceId = GetAuthServiceId();
+        var result = await _customerServiceApplication.UpdateAsync(customerId, authServiceId, dto);
 
         return ResponseOk(result);
     }
 
-    private Guid GetUserId()
+    private Guid GetAuthServiceId()
     {
         return (Guid)HttpContext.Items["UserId"]!;
     }

@@ -30,7 +30,7 @@ public class CustomerServiceApplication : BaseServiceApplication, ICustomerServi
 
     public async Task<CustomerResponseDto> GetByUserIdAsync(Guid id)
     {
-        var user = await _customerReadRepository.GetByUserIdAsync(id);
+        var user = await _customerReadRepository.GetByIdAsync(id);
         if (user == null)
         {
             var userName = _httpContextAccessor.HttpContext.User.FindFirst(JwtRegisteredClaimNames.Name)?.Value ?? "";
@@ -64,12 +64,12 @@ public class CustomerServiceApplication : BaseServiceApplication, ICustomerServi
         return customer.ToDto();
     }
 
-    public async Task<CustomerResponseDto> UpdateAsync(Guid id, CustomerUpdateDto dto)
+    public async Task<CustomerResponseDto> UpdateAsync(Guid customerId, Guid authServiceId, CustomerUpdateDto dto)
     {
-        var customer = await _customerReadRepository.GetByUserIdAsync(id);
+        var customer = await _customerReadRepository.GetByIdAndAuthServiceIdAsync(customerId, authServiceId);
         if (customer == null)
         {
-            _notificationContext.AddNotification("User", "User Not found");
+            _notificationContext.AddNotification("Customer", "Customer not found for this user");
             return default!;
         }
 

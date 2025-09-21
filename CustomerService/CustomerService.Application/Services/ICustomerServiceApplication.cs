@@ -7,5 +7,5 @@ public interface ICustomerServiceApplication : IBaseServiceApplication
 {
     Task<CustomerResponseDto> GetByUserIdAsync(Guid id);
     Task<CustomerResponseDto> CreateAsync(CustomerRequestDto dto, Guid userId, string userName, string userEmail);
-    Task<CustomerResponseDto> UpdateAsync(Guid id, CustomerUpdateDto dto);
+    Task<CustomerResponseDto> UpdateAsync(Guid customerId, Guid authServiceId, CustomerUpdateDto dto);
 }

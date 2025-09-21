@@ -6,8 +6,10 @@ public class CustomerReadRepository : BaseReadRepository<Customer>, ICustomerRea
     {
     }
 
-    public async Task<Customer?> GetByUserIdAsync(Guid userId)
+    public async Task<Customer?> GetByIdAndAuthServiceIdAsync(Guid customerId, Guid authServiceId)
     {
-        return await Set.Where(p => p.AuthServiceId == userId).FirstOrDefaultAsync();
+        return await Set
+            .Where(c => c.Id == customerId && c.AuthServiceId == authServiceId)
+            .FirstOrDefaultAsync();
     }
 }

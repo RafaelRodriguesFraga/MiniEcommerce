@@ -29,8 +29,8 @@ public class AddressDocs : BaseDoc<AddressDocKey>
                         createdAt = DateTime.Now,
                         updatedAt = DateTime.Now
                     }),
-                    (400, "Bad Request", typeof(Response), new { success = false, errors = new[] { "error" } }),
-                    (401, "Unauthorized", null, null)
+                    CommonResponsesDoc.BadRequest,
+                    CommonResponsesDoc.Unauthorized
             }
         };
 
@@ -57,8 +57,8 @@ public class AddressDocs : BaseDoc<AddressDocKey>
                         updatedAt = DateTime.Now
                     }
                 }),
-                (400, "Bad Request", typeof(Response), new { success = false, errors = new[] { "error" } }),
-                (401, "Unauthorized", null, null)
+                CommonResponsesDoc.BadRequest,
+                CommonResponsesDoc.Unauthorized
             }
         };
 
@@ -93,8 +93,8 @@ public class AddressDocs : BaseDoc<AddressDocKey>
                     createdAt = DateTime.Now,
                     updatedAt = DateTime.Now
                 }),
-                (400, "Bad Request", typeof(Response), new { success = false, errors = new[] { "error" } }),
-                (401, "Unauthorized", null, null)
+                CommonResponsesDoc.BadRequest,
+                CommonResponsesDoc.Unauthorized
             }
         };
 
@@ -114,9 +114,9 @@ public class AddressDocs : BaseDoc<AddressDocKey>
             },
             Responses = new (int, string, Type?, object?)[]
             {
-                (200, "Success", typeof(Response), new { success = true }),
-                (400, "Bad Request", typeof(Response), new { success = false, errors = new[] { "error" } }),
-                (401, "Unauthorized", null, null)
+                CommonResponsesDoc.Success,
+                CommonResponsesDoc.BadRequest,
+                CommonResponsesDoc.Unauthorized
             }
         };
 
@@ -126,9 +126,9 @@ public class AddressDocs : BaseDoc<AddressDocKey>
         {
             Responses = new (int, string, Type?, object?)[]
             {
-                (200, "Success", typeof(Response), new { success = true }),
-                (400, "Bad Request", typeof(Response), new { success = false, errors = new[] { "error" } }),
-                (401, "Unauthorized", null, null)
+                CommonResponsesDoc.Success,
+                CommonResponsesDoc.BadRequest,
+                CommonResponsesDoc.Unauthorized
             }
         };
     }

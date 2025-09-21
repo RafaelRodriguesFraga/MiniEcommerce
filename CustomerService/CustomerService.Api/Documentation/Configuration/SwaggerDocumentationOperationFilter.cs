@@ -46,7 +46,8 @@ public class SwaggerDocumentationOperationFilter : IOperationFilter
 
         operation.Summary = apiDoc.Summary;
         operation.Description = apiDoc.Description;
-
+        operation.Responses.Clear();
+        
         if (apiDoc.RequestExample != null && operation.RequestBody != null)
         {
             var jsonExample = JsonSerializer.Serialize(apiDoc.RequestExample);

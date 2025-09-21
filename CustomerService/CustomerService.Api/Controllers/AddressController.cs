@@ -40,7 +40,7 @@ public class AddressController : ApiControllerBase
     }
 
     [HttpPost]
-    [SwaggerDocumentation(typeof(AddressDocs), nameof(AddressDocKey.GetAllByCustomerId))]
+    [SwaggerDocumentation(typeof(AddressDocs), nameof(AddressDocKey.Create))]
     public async Task<IActionResult> CreateAsync([FromBody] AddressRequestDto request)
     {
 
