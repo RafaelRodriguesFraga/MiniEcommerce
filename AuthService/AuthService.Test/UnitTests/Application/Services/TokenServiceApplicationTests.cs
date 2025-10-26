@@ -42,7 +42,7 @@ public class TokenServiceApplicationTests
     public void Should_Generate_Token_With_Id_And_Email()
     {
 
-        var result = _service.GenerateTokenAsync(_id, _email, _name);
+        var result = _service.GenerateToken(_id, _email, _name);
 
         Assert.NotNull(result);
         Assert.Equal(_id, result.Id);
@@ -80,7 +80,7 @@ public class TokenServiceApplicationTests
     public void Should_Return_Principal_From_Expired_Token()
     {
 
-        var tokenDto = _service.GenerateTokenAsync(_id, _email, _name);
+        var tokenDto = _service.GenerateToken(_id, _email, _name);
 
         var principal = _service.GetPrincipalFromExpiredToken(tokenDto.Token);
 
@@ -114,7 +114,7 @@ public class TokenServiceApplicationTests
         _configurationMock.Setup(x => x.GetSection("TokenSettings:Secret")).Returns(emptySection.Object);
         _configurationMock.Setup(x => x.GetSection("TokenSettings:ExpiresToken")).Returns(emptySection.Object);
 
-        var result = _service.GenerateTokenAsync(_id, _email, _name);
+        var result = _service.GenerateToken(_id, _email, _name);
 
         Assert.Null(result);
         Assert.True(_notificationContext.HasNotifications);
