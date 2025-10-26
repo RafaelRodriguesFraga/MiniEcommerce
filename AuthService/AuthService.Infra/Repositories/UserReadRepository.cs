@@ -9,14 +9,14 @@ namespace AuthService.Infra.Repositories;
 
 public class UserReadRepository : BaseReadRepository<User>, IUserReadRepository
 {
-   
+
     public UserReadRepository(BaseContext context) : base(context)
     {
-       
+
     }
 
     public async Task<User?> GetByEmailAsync(string email)
     {
-        return await Set.FirstOrDefaultAsync(u => u.Email == email);
+        return await Set.AsNoTracking().SingleOrDefaultAsync(u => u.Email == email);
     }
 }
