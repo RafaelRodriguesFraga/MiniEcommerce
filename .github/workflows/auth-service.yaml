@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'MiniEcommerce/AuthService/**'
+      - 'AuthService/**'
       - '.github/workflows/auth-service.yaml'
   workflow_dispatch:
 
@@ -24,13 +24,13 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore ./MiniEcommerce/AuthService/AuthService.sln
+        run: dotnet restore ./AuthService/AuthService.sln
 
       - name: Build Project
-        run: dotnet build ./MiniEcommerce/AuthService/AuthService.sln -c Release --no-restore
+        run: dotnet build ./AuthService/AuthService.sln -c Release --no-restore
 
       - name: Run Unit Tests
-        run: dotnet test ./MiniEcommerce/AuthService/AuthService.sln -c Release --no-build --verbosity normal
+        run: dotnet test ./AuthService/AuthService.sln -c Release --no-build --verbosity normal
 
   deploy:
     name: Build and Push Docker Image
