@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AuthService.Application.DTOs;
 using AuthService.Application.DTOs.Auth;
 using AuthService.Application.DTOs.Login;
@@ -7,6 +8,7 @@ using AuthService.Application.Services.Auth;
 using AuthService.Application.Services.Token;
 using DotnetBaseKit.Components.Api.Base;
 using DotnetBaseKit.Components.Api.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +32,14 @@ public class AuthController : ApiControllerBase
         _authServiceApplication = authServiceApplication;
     }
 
+    [HttpGet(".well-known/jwks.json")]
+    public IActionResult GetJsonWebKeySet()
+    {
+        var jwks = _tokenServiceApplication.GetJsonWebKeySet();
+
+        return Ok(jwks);
+    }
+
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRequestDto request)
     {
@@ -39,8 +49,6 @@ public class AuthController : ApiControllerBase
     }
 
 
-    [ProducesResponseType(typeof(TokenDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(LoginRequestDto dto)
     {
@@ -51,7 +59,7 @@ public class AuthController : ApiControllerBase
             return ResponseBadRequest(authenticateUser);
         }
 
-        var token = _tokenServiceApplication.GenerateTokenAsync(authenticateUser!.Id, authenticateUser.Email, authenticateUser.Name);
+        var token = _tokenServiceApplication.GenerateToken(authenticateUser!.Id, authenticateUser.Email, authenticateUser.Name);
 
         return ResponseOk(token);
     }
