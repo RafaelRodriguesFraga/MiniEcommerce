@@ -30,11 +30,11 @@ public class User : BaseEntity
 
     public override void Validate()
     {
-        throw new NotImplementedException();
     }
 
     public void SetPassword(string newPassword)
     {
         Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        UpdatedAt = DateTime.UtcNow;
     }
 }
