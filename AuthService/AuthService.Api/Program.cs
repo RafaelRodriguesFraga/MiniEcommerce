@@ -1,19 +1,14 @@
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using AuthService.Api.Extensions;
 using AuthService.Application.Services;
 using AuthService.Application.Services.Auth;
 using AuthService.Application.Services.Token;
 using AuthService.Application.Services.User;
+using AuthService.Application.Settings;
 using AuthService.Infra.Context;
 using AuthService.Infra.Extensions;
 using DotnetBaseKit.Components.Api;
 using DotnetBaseKit.Components.Application;
 using DotnetBaseKit.Components.Infra.Sql;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +33,14 @@ builder.Services.AddApplication();
 builder.Services.AddRepositories();
 builder.Services.AddDbContext<AuthContext>(configuration);
 builder.Services.AddCustomAuthentication(configuration);
+
+var keySettings = new KeySettings
+{
+    PrivateKey = File.ReadAllText("private_key.pem"),
+    PublicKey = File.ReadAllText("public_key.pem")
+};
+
+builder.Services.AddSingleton(keySettings);
 
 var app = builder.Build();
 

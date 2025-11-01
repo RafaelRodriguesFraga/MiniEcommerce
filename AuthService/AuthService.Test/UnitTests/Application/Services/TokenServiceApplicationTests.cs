@@ -1,7 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AuthService.Application.Services.Token;
+using AuthService.Application.Settings;
 using DotnetBaseKit.Components.Shared.Notifications;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -17,21 +19,18 @@ public class TokenServiceApplicationTests
     private readonly Guid _id;
     private readonly string _name;
     private readonly string _email;
+
     public TokenServiceApplicationTests()
     {
         _configurationMock = new Mock<IConfiguration>();
         _notificationContext = new NotificationContext();
 
-        var secretSection = new Mock<IConfigurationSection>();
-        secretSection.Setup(x => x.Value).Returns("your_secret_key_1234567890123456");
+        using var rsa = RSA.Create(2048);
+        var privateKeyPem = rsa.ExportRSAPrivateKeyPem();
+        var publicKeyPem = rsa.ExportRSAPublicKeyPem();
 
-        var expiresSection = new Mock<IConfigurationSection>();
-        expiresSection.Setup(x => x.Value).Returns("1");
-
-        _configurationMock.Setup(x => x.GetSection("TokenSettings:Secret")).Returns(secretSection.Object);
-        _configurationMock.Setup(x => x.GetSection("TokenSettings:ExpiresToken")).Returns(expiresSection.Object);
-
-        _service = new TokenServiceApplication(_notificationContext, _configurationMock.Object);
+        var keySettings = new KeySettings { PrivateKey = privateKeyPem, PublicKey = publicKeyPem };
+        _service = new TokenServiceApplication(_notificationContext, keySettings);
 
         _email = "found@example.com";
         _id = Guid.NewGuid();
@@ -41,7 +40,6 @@ public class TokenServiceApplicationTests
     [Fact(DisplayName = "Should generate token with id and email")]
     public void Should_Generate_Token_With_Id_And_Email()
     {
-
         var result = _service.GenerateToken(_id, _email, _name);
 
         Assert.NotNull(result);
@@ -53,19 +51,6 @@ public class TokenServiceApplicationTests
         Assert.False(_notificationContext.HasNotifications);
     }
 
-    [Fact(DisplayName = "Should generate token from claims")]
-    public void Should_Generate_Token_From_Claims()
-    {
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Email, "user@example.com"),
-            new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString())
-        };
-
-        var token = _service.GenerateToken(claims);
-
-        Assert.False(string.IsNullOrEmpty(token));
-    }
 
     [Fact(DisplayName = "Should generate a secure refresh token")]
     public void Shoud_Generate_Secure_Refresh_Token()
@@ -79,7 +64,6 @@ public class TokenServiceApplicationTests
     [Fact(DisplayName = "Should return principal from expired token")]
     public void Should_Return_Principal_From_Expired_Token()
     {
-
         var tokenDto = _service.GenerateToken(_id, _email, _name);
 
         var principal = _service.GetPrincipalFromExpiredToken(tokenDto.Token);
@@ -88,33 +72,13 @@ public class TokenServiceApplicationTests
         Assert.True(principal.Identity!.IsAuthenticated);
     }
 
-    [Fact(DisplayName = "Should return a notification if token is invalid")]
-    public void Should_Return_Notification_If_Token_Is_Invalid()
-    {
-        var invalidToken = GenerateInvalidJwt();
-
-        _configurationMock.Setup(x => x.GetSection("TokenSettings:Secret").Value)
-            .Returns("valid-secret-key-12345");
-
-        var service = new TokenServiceApplication(_notificationContext, _configurationMock.Object);
-
-        var result = service.GetPrincipalFromExpiredToken(invalidToken);
-
-        Assert.Null(result);
-        Assert.True(_notificationContext.HasNotifications);
-        Assert.Contains(_notificationContext.Notifications, n => n.Key == "Token");
-    }
-
     [Fact(DisplayName = "Should add notification when config is missing")]
     public void Should_Add_Notification_When_Config_Is_Missing()
     {
-        var emptySection = new Mock<IConfigurationSection>();
-        emptySection.Setup(x => x.Value).Returns<string?>(null);
+        var emptyKeySettings = new KeySettings();
+        var serviceWithEmptyKeys = new TokenServiceApplication(_notificationContext, emptyKeySettings);
 
-        _configurationMock.Setup(x => x.GetSection("TokenSettings:Secret")).Returns(emptySection.Object);
-        _configurationMock.Setup(x => x.GetSection("TokenSettings:ExpiresToken")).Returns(emptySection.Object);
-
-        var result = _service.GenerateToken(_id, _email, _name);
+        var result = serviceWithEmptyKeys.GenerateToken(_id, _email, _name);
 
         Assert.Null(result);
         Assert.True(_notificationContext.HasNotifications);

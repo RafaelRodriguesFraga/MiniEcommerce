@@ -48,7 +48,7 @@ public class UserServiceApplicationTests
         var login = new LoginRequestDto { Email = user.Email, Password = "wrong" };
 
         var result = await _service.AuthenticateAsync(login);
-        
+
         Assert.Null(result);
         Assert.True(_notificationContext.HasNotifications);
         Assert.Contains(_notificationContext.Notifications, n => n.Key == "Password");

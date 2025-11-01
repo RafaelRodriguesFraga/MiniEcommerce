@@ -1,34 +1,33 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using AuthService.Application.DTOs;
+using AuthService.Application.Settings;
 using AuthService.Shared;
 using DotnetBaseKit.Components.Application.Base;
 using DotnetBaseKit.Components.Shared.Notifications;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AuthService.Application.Services.Token;
 
 public class TokenServiceApplication : BaseServiceApplication, ITokenServiceApplication
 {
-    private readonly IConfiguration _configuration;
+    private readonly KeySettings _keySettings;
 
-    public TokenServiceApplication(NotificationContext notificationContext, IConfiguration configuration) : base(
+    public TokenServiceApplication(NotificationContext notificationContext, KeySettings keySettings) : base(
         notificationContext)
     {
-        _configuration = configuration;
+        _keySettings = keySettings;
     }
 
     public TokenDto GenerateToken(Guid id, string email, string name)
     {
-        var privateKeyPath = _configuration["JwtSettings:PrivateKeyPath"];
-        if (string.IsNullOrEmpty(privateKeyPath))
+        var privateKeyText = _keySettings.PrivateKey;
+        if (string.IsNullOrEmpty(privateKeyText))
         {
-            throw new Exception("Caminho do arquivo private_key.pem nao encontrado");
+            _notificationContext.AddNotification("Token", "Chave privada não configurada.");
+            return null;
         }
-        var privateKeyText = File.ReadAllText(privateKeyPath);
 
         var rsaKey = RSA.Create();
         rsaKey.ImportFromPem(privateKeyText);
@@ -80,37 +79,47 @@ public class TokenServiceApplication : BaseServiceApplication, ITokenServiceAppl
         return tokenDto;
     }
 
-    public string GenerateToken(IEnumerable<Claim> claims)
+    public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
-        var secret = _configuration.GetSection("TokenSettings:Secret").Value;
-        var expiresToken = _configuration.GetSection("TokenSettings:ExpiresToken").Value;
-
-        if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(expiresToken))
+        var publicKeyText = _keySettings.PublicKey;
+        if (string.IsNullOrEmpty(publicKeyText))
         {
-            _notificationContext.AddNotification("Token", "Token is not configured");
-            return default;
+            _notificationContext.AddNotification("Token", "Chave pública não configurada.");
+            return null;
         }
 
-        var date = DateTime.Now;
+        var rsa = RSA.Create();
+        rsa.ImportFromPem(publicKeyText);
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(secret);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
+        var tokenValidationParameters = new TokenValidationParameters
         {
-            NotBefore = date,
-            IssuedAt = date,
-            Expires = date.AddHours(Convert.ToInt32(expiresToken) | 2),
-            Subject = new ClaimsIdentity(claims),
-            SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(key),
-                SecurityAlgorithms.HmacSha256Signature)
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new RsaSecurityKey(rsa),
+            ValidateLifetime = false,
+
         };
 
-        var createToken = tokenHandler.CreateToken(tokenDescriptor);
-        var token = tokenHandler.WriteToken(createToken);
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
 
-        return token;
+            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.RsaSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                _notificationContext.AddNotification("Token", "Invalid token algorithm");
+                return null;
+            }
+
+            return principal;
+        }
+        catch (Exception ex)
+        {
+            _notificationContext.AddNotification("Token", $"Invalid token: {ex.Message}");
+            return null;
+        }
     }
 
     public string GenerateRefreshToken()
@@ -122,59 +131,9 @@ public class TokenServiceApplication : BaseServiceApplication, ITokenServiceAppl
         return Convert.ToBase64String(randomNumber);
     }
 
-    public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
-    {
-        var secret = _configuration.GetSection("TokenSettings:Secret").Value;
-        var key = Encoding.ASCII.GetBytes(secret);
-
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false,
-            ValidateIssuer = false,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateLifetime = false, // Permitir tokens expirados
-            ValidAlgorithms = new[] { SecurityAlgorithms.HmacSha256 },
-            CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
-        };
-
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var jwtToken = tokenHandler.ReadJwtToken(token);
-
-            if (!jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCultureIgnoreCase))
-            {
-                _notificationContext.AddNotification("Token", "Invalid token algorithm");
-                return null;
-            }
-
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-
-            return principal;
-        }
-        catch (SecurityTokenSignatureKeyNotFoundException)
-        {
-            _notificationContext.AddNotification("Token", "Invalid token signature");
-            return null;
-        }
-        catch (SecurityTokenException ex)
-        {
-            _notificationContext.AddNotification("Token", "Invalid token");
-            return null;
-        }
-        catch (ArgumentException ex)
-        {
-            _notificationContext.AddNotification("Token", "Malformed token");
-            return null;
-        }
-    }
-
     public object GetJsonWebKeySet()
     {
-        var publicKeyPath = _configuration["JwtSettings:PublicKeyPath"];
+        var publicKeyPath = _keySettings.PublicKey;
         if (string.IsNullOrEmpty(publicKeyPath))
         {
             throw new Exception("Caminho do arquivo public_key.pem nao encontrado");
@@ -197,6 +156,5 @@ public class TokenServiceApplication : BaseServiceApplication, ITokenServiceAppl
         };
 
         return new { keys = new[] { jwk } };
-
     }
 }
