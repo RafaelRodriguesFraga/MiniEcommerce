@@ -54,6 +54,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: . 
-          file: ./MiniEcommerce/AuthService/AuthService.Api/Dockerfile 
+          file: ./AuthService/AuthService.Api/Dockerfile 
           push: true 
           tags: ghcr.io/${{ github.repository_owner }}/authservice:latest 
