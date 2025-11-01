@@ -26,6 +26,12 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ./AuthService/AuthService.sln
 
+      - name: Create .pem files from secrets
+        run: |
+          echo "${{ secrets.PRIVATE_KEY_PEM }}" > ./MiniEcommerce/AuthService/AuthService.Api/private_key.pem
+          echo "${{ secrets.PUBLIC_KEY_PEM }}" > ./MiniEcommerce/AuthService/AuthService.Api/public_key.pem
+        shell: bash
+
       - name: Build Project
         run: dotnet build ./AuthService/AuthService.sln -c Release --no-restore
 
@@ -42,12 +48,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Create .pem files from secrets
-        run: |
-          echo "${{ secrets.PRIVATE_KEY_PEM }}" > ./MiniEcommerce/AuthService/AuthService.Api/private_key.pem
-          echo "${{ secrets.PUBLIC_KEY_PEM }}" > ./MiniEcommerce/AuthService/AuthService.Api/public_key.pem
-        shell: bash
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
