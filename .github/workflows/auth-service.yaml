@@ -56,10 +56,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Docker Tag
+        id: repo_owner
+        run: echo "tag=ghcr.io/$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')/authservice:latest" >> $GITHUB_OUTPUT
+       
       - name: Build and push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: . 
           file: ./AuthService/AuthService.Api/Dockerfile 
           push: true 
-          tags: ghcr.io/${{ lower(github.repository_owner) }}/authservice:latest 
+          tags: ${{ steps.repo_owner.outputs.tag }}
