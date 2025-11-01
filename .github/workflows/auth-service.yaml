@@ -28,8 +28,8 @@ jobs:
 
       - name: Create .pem files from secrets
         run: |
-          echo "${{ secrets.PRIVATE_KEY_PEM }}" > ./MiniEcommerce/AuthService/AuthService.Api/private_key.pem
-          echo "${{ secrets.PUBLIC_KEY_PEM }}" > ./MiniEcommerce/AuthService/AuthService.Api/public_key.pem
+          echo "${{ secrets.PRIVATE_KEY_PEM }}" > ./AuthService/AuthService.Api/private_key.pem
+          echo "${{ secrets.PUBLIC_KEY_PEM }}" > ./AuthService/AuthService.Api/public_key.pem
         shell: bash
 
       - name: Build Project
