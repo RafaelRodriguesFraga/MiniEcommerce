@@ -62,5 +62,4 @@ jobs:
           context: . 
           file: ./AuthService/AuthService.Api/Dockerfile 
           push: true 
-          tags: |
-            ghcr.io/{{.Owner | lower}}/authservice:latest 
+          tags: ghcr.io/${{ lower(github.repository_owner) }}/authservice:latest 
