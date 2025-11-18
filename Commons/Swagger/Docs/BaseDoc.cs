@@ -1,6 +1,6 @@
-using MiniEcommerce.Commons.Swagger.Configuration;
+using Commons.Swagger.Configuration;
 
-namespace MiniEcommerce.Commons.Swagger.Docs;
+namespace Commons.Swagger.Docs;
 
 public abstract class BaseDoc<TKey> where TKey : Enum
 {

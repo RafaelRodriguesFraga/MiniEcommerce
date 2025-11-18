@@ -1,4 +1,4 @@
-namespace MiniEcommerce.Commons.Swagger;
+namespace Commons.Swagger.Configuration;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 public class SwaggerDocumentationAttribute : Attribute

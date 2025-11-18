@@ -1,4 +1,4 @@
-namespace MiniEcommerce.Commons.Swagger.Configuration;
+namespace Commons.Swagger.Configuration;
 public class SwaggerDocumentationInfo
 {
     public SwaggerDocumentationInfo(string summary, string description)

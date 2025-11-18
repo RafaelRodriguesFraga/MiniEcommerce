@@ -52,7 +52,8 @@ public class CustomerController : ApiControllerBase
         return ResponseCreated(result);
     }
 
-    [HttpPatch("{customerId:guid}")]    [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.Update))]
+    [HttpPatch("{customerId:guid}")]
+    [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.Update))]
     public async Task<IActionResult> UpdateAsync([FromRoute] Guid customerId, [FromBody] CustomerUpdateDto dto)
     {
         var authServiceId = GetAuthServiceId();

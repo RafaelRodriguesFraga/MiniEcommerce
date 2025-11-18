@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace MiniEcommerce.Commons.Swagger.Configuration;
+namespace Commons.Swagger.Configuration;
 
 public class SwaggerDocumentationOperationFilter : IOperationFilter
 {

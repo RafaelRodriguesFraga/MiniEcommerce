@@ -1,6 +1,6 @@
 using DotnetBaseKit.Components.Api.Responses;
 
-namespace MiniEcommerce.Commons.Swagger.Docs;
+namespace Commons.Swagger.Docs;
 
 public static class CommonResponsesDoc
 {
