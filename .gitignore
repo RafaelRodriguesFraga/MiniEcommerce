@@ -1,4 +1,6 @@
 
+.idea
+
 # AuthService .gitignore file
 AuthService/.idea/.idea.AuthService/.idea/.gitignore
 AuthService/.idea/.idea.AuthService/.idea/encodings.xml
@@ -43,3 +45,6 @@ CustomerService/CustomerService.Tests/bin
 CustomerService/CustomerService.Tests/obj
 CustomerService/CustomerService.sln.DotSettings.user
 /CustomerService/.vs
+Commons/bin
+Commons/obj
+Commons/.idea

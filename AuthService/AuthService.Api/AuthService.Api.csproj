@@ -33,6 +33,7 @@
     <ItemGroup>
       <ProjectReference Include="..\AuthService.Application\AuthService.Application.csproj" />
       <ProjectReference Include="..\AuthService.Infra\AuthService.Infra.csproj" />
+      <ProjectReference Include="..\..\Commons\Commons.csproj" />
     </ItemGroup>
 
     <ItemGroup>
