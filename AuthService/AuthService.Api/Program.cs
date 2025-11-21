@@ -1,8 +1,6 @@
 using AuthService.Api.Extensions;
-using AuthService.Application.Services;
-using AuthService.Application.Services.Auth;
+using AuthService.Application.Services.Extensions;
 using AuthService.Application.Services.Token;
-using AuthService.Application.Services.User;
 using AuthService.Application.Settings;
 using AuthService.Infra.Context;
 using AuthService.Infra.Extensions;
@@ -15,24 +13,18 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddControllers();
-
-builder.Services.AddScoped<IUserServiceApplication, UserServiceApplication>();
-builder.Services.AddScoped<ITokenServiceApplication, TokenServiceApplication>();
-builder.Services.AddScoped<IAuthServiceApplication, AuthServiceApplication>();
-
-builder.Services.AddRepositories();
-builder.Services.AddCustomSwagger();
 
 // BASEKIT DEPENDENCIES
 builder.Services.AddApi();
 builder.Services.AddApplication();
 
-// PROJECT DEENDENCIES
+// PROJECT DEPENDENCIES
 builder.Services.AddRepositories();
 builder.Services.AddDbContext<AuthContext>(configuration);
 builder.Services.AddCustomAuthentication(configuration);
+builder.Services.AddServices();
+builder.Services.AddCustomSwagger();
 
 var keySettings = new KeySettings
 {
@@ -41,6 +33,11 @@ var keySettings = new KeySettings
 };
 
 builder.Services.AddSingleton(keySettings);
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection") ?? "authservice-cache:6379";
+});
 
 var app = builder.Build();
 
