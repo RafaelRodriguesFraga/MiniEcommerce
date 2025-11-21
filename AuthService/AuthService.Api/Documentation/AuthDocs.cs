@@ -1,6 +1,7 @@
 using AuthService.Api.Documentation.Keys;
-using AuthService.Application.DTOs;
-using Commons
+using Commons.Swagger.Configuration;
+using Commons.Swagger.Docs;
+
 namespace AuthService.Api.Documentation;
 
 public class AuthDocs : BaseDoc<AuthDocKey>
@@ -11,9 +12,9 @@ public class AuthDocs : BaseDoc<AuthDocKey>
             summary: "Authenticate user",
             description: "Returns access and refresh tokens")
         {
-            // ... seus exemplos ...
-            Responses = new[] {
-                (200, "Success", typeof(TokenDto), null),
+            Responses = new[]
+            {
+                CommonResponsesDoc.Success,
                 CommonResponsesDoc.BadRequest
             }
         };
