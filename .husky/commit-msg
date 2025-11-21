@@ -2,5 +2,5 @@
 . "$(dirname "$0")/_/husky.sh"
 
 ## run all tasks
-husky run --name validate-commit-msg --args "$1"
+dotnet husky run --name validate-commit-msg --args "$1"
 
