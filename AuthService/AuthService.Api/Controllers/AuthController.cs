@@ -1,5 +1,5 @@
-using System.Security.Claims;
-using AuthService.Application.DTOs;
+using AuthService.Api.Documentation;
+using AuthService.Api.Documentation.Keys;
 using AuthService.Application.DTOs.Auth;
 using AuthService.Application.DTOs.Login;
 using AuthService.Application.DTOs.Token;
@@ -8,10 +8,9 @@ using AuthService.Application.Services;
 using AuthService.Application.Services.Auth;
 using AuthService.Application.Services.Token;
 using AuthService.Application.Services.Token.Facade;
+using Commons.Swagger.Configuration;
 using DotnetBaseKit.Components.Api.Base;
 using DotnetBaseKit.Components.Api.Responses;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -57,6 +56,7 @@ public class AuthController : ApiControllerBase
 
 
     [HttpPost("login")]
+    [SwaggerDocumentation(typeof(AuthDocs), nameof(AuthDocKey.Login))]
     public async Task<IActionResult> LoginAsync(LoginRequestDto dto)
     {
         var user = await _userServiceApplication.AuthenticateAsync(dto);

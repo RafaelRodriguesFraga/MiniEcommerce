@@ -1,6 +1,7 @@
 using AuthService.Api.Documentation.Keys;
-using AuthService.Application.DTOs;
-using Commons
+using Commons.Swagger.Configuration;
+using Commons.Swagger.Docs;
+
 namespace AuthService.Api.Documentation;
 
 public class AuthDocs : BaseDoc<AuthDocKey>
