@@ -1,11 +1,14 @@
 
 .idea
 
+
+
 # AuthService .gitignore file
 AuthService/.idea/.idea.AuthService/.idea/.gitignore
 AuthService/.idea/.idea.AuthService/.idea/encodings.xml
 AuthService/.idea/.idea.AuthService/.idea/indexLayout.xml
 AuthService/.idea/.idea.AuthService/.idea/vcs.xml
+AuthService/AuthService.Api/private_key.pem
 AuthService/AuthService.Api/bin
 AuthService/AuthService.Api/obj
 AuthService/AuthService.Api/appsettings.json
