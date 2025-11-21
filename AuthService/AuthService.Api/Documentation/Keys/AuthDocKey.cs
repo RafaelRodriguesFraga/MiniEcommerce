@@ -4,5 +4,8 @@ public enum AuthDocKey
 {
     Login,
     Register,
-    RefreshToken
+    RefreshToken,
+    GetJwk,
+    ResetPassword
+
 }

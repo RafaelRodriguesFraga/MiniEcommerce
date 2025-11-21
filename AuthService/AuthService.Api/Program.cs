@@ -48,6 +48,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/swagger");
+    return Task.CompletedTask;
+});
+
 app.UseHttpLoggingMiddleware();
 app.UseHttpsRedirection();
 app.UseAuthentication();

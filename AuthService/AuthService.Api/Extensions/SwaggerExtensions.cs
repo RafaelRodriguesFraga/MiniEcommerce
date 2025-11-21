@@ -1,4 +1,5 @@
 using System.Reflection;
+using Commons.Swagger.Configuration;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -44,6 +45,8 @@ public static class SwaggerExtensions
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             c.IncludeXmlComments(xmlPath);
+
+            c.OperationFilter<SwaggerDocumentationOperationFilter>();
 
         });
 

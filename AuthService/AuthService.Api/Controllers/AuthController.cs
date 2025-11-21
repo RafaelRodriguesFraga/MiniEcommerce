@@ -47,6 +47,7 @@ public class AuthController : ApiControllerBase
     }
 
     [HttpPost("register")]
+    [SwaggerDocumentation(typeof(AuthDocs), nameof(AuthDocKey.Register))]
     public async Task<IActionResult> RegisterAsync([FromBody] UserRequestDto request)
     {
         await _userServiceApplication.RegisterAsync(request);
@@ -73,6 +74,7 @@ public class AuthController : ApiControllerBase
 
 
     [HttpPost("refresh-token")]
+    [SwaggerDocumentation(typeof(AuthDocs), nameof(AuthDocKey.RefreshToken))]
     public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequestDto dto)
     {
         var tokenDto = await _tokenFacade.RefreshTokenAsync(dto.Token, dto.RefreshToken);
@@ -87,6 +89,7 @@ public class AuthController : ApiControllerBase
 
 
     [HttpPost("reset-password")]
+    [SwaggerDocumentation(typeof(AuthDocs), nameof(AuthDocKey.ResetPassword))]
     public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto dto)
     {
         await _authServiceApplication.ResetPasswordAsync(dto.Email, dto.NewPassword);
