@@ -2,10 +2,12 @@ using System.Security.Claims;
 using AuthService.Application.DTOs;
 using AuthService.Application.DTOs.Auth;
 using AuthService.Application.DTOs.Login;
+using AuthService.Application.DTOs.Token;
 using AuthService.Application.DTOs.User;
 using AuthService.Application.Services;
 using AuthService.Application.Services.Auth;
 using AuthService.Application.Services.Token;
+using AuthService.Application.Services.Token.Facade;
 using DotnetBaseKit.Components.Api.Base;
 using DotnetBaseKit.Components.Api.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -20,28 +22,33 @@ namespace AuthService.Api.Controllers;
 public class AuthController : ApiControllerBase
 {
     private readonly IUserServiceApplication _userServiceApplication;
-    private readonly ITokenServiceApplication _tokenServiceApplication;
     private readonly IAuthServiceApplication _authServiceApplication;
+    private readonly ITokenFacade _tokenFacade;
+    private readonly IJwkServiceApplication _jwkService;
 
-    public AuthController(IResponseFactory responseFactory, IUserServiceApplication userServiceApplication, ITokenServiceApplication tokenServiceApplication,
-        IAuthServiceApplication authServiceApplication)
+    public AuthController(
+        IResponseFactory responseFactory,
+        IUserServiceApplication userServiceApplication,
+        IAuthServiceApplication authServiceApplication,
+        ITokenFacade tokenFacade, IJwkServiceApplication jwkService)
         : base(responseFactory)
     {
         _userServiceApplication = userServiceApplication;
-        _tokenServiceApplication = tokenServiceApplication;
         _authServiceApplication = authServiceApplication;
+        _tokenFacade = tokenFacade;
+        _jwkService = jwkService;
     }
 
     [HttpGet(".well-known/jwks.json")]
     public IActionResult GetJsonWebKeySet()
     {
-        var jwks = _tokenServiceApplication.GetJsonWebKeySet();
+        var jwks = _jwkService.GetJsonWebKeySet();
 
         return Ok(jwks);
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] UserRequestDto request)
+    public async Task<IActionResult> RegisterAsync([FromBody] UserRequestDto request)
     {
         await _userServiceApplication.RegisterAsync(request);
 
@@ -52,17 +59,32 @@ public class AuthController : ApiControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(LoginRequestDto dto)
     {
-        var authenticateUser = await _userServiceApplication.AuthenticateAsync(dto);
-        var userIsNull = authenticateUser == null;
+        var user = await _userServiceApplication.AuthenticateAsync(dto);
+        var userIsNull = user == null;
         if (userIsNull)
         {
-            return ResponseBadRequest(authenticateUser);
+            return ResponseBadRequest(user);
         }
 
-        var token = _tokenServiceApplication.GenerateToken(authenticateUser!.Id, authenticateUser.Email, authenticateUser.Name);
+        var tokenDto = await _tokenFacade.GenerateAndSaveTokensAsync(user.Id, user.Email, user.Name);
 
-        return ResponseOk(token);
+        return ResponseOk(tokenDto);
     }
+
+
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequestDto dto)
+    {
+        var tokenDto = await _tokenFacade.RefreshTokenAsync(dto.Token, dto.RefreshToken);
+
+        if (tokenDto == null)
+        {
+            return Unauthorized("Expired or invalid refresh token");
+        }
+
+        return ResponseOk(tokenDto);
+    }
+
 
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto dto)
