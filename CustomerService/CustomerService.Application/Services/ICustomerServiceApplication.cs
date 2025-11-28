@@ -5,7 +5,7 @@ namespace CustomerService.Application;
 
 public interface ICustomerServiceApplication : IBaseServiceApplication
 {
-    Task<CustomerResponseDto> GetByUserIdAsync(Guid id);
-    Task<CustomerResponseDto> CreateAsync(CustomerRequestDto dto, Guid userId, string userName, string userEmail);
-    Task<CustomerResponseDto> UpdateAsync(Guid customerId, Guid authServiceId, CustomerUpdateDto dto);
+    Task<CustomerResponseDto?> GetByUserIdAsync(Guid id);
+    Task<CustomerResponseDto> GetOrCreateAsync();
+    Task<CustomerResponseDto> UpdateAsync(Guid authServiceId, CustomerUpdateDto dto);
 }

@@ -1,12 +1,10 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using DotnetBaseKit.Components.Application.Base;
 using DotnetBaseKit.Components.Shared.Notifications;
-using Microsoft.AspNetCore.Http;
 using CustomerService.Application.DTOs;
 using CustomerService.Application.Extensions;
 using CustomerService.Domain.Entities;
 using CustomerService.Domain.Repositories;
+using CustomerService.Application.Interfaces;
 
 namespace CustomerService.Application;
 
@@ -14,59 +12,49 @@ public class CustomerServiceApplication : BaseServiceApplication, ICustomerServi
 {
     private readonly ICustomerReadRepository _customerReadRepository;
     private readonly ICustomerWriteRepository _customerWriteRepository;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    private readonly IUserContext _userContext;
 
     public object HttpContext { get; private set; }
 
     public CustomerServiceApplication(NotificationContext notificationContext,
         ICustomerReadRepository customerReadRepository,
-        ICustomerWriteRepository customerWriteRepository,
-        IHttpContextAccessor httpContextAccessor) : base(notificationContext)
+        ICustomerWriteRepository customerWriteRepository
+,
+        IUserContext userContext) : base(notificationContext)
     {
         _customerReadRepository = customerReadRepository;
         _customerWriteRepository = customerWriteRepository;
-        _httpContextAccessor = httpContextAccessor;
+        _userContext = userContext;
     }
 
-    public async Task<CustomerResponseDto> GetByUserIdAsync(Guid id)
+    public async Task<CustomerResponseDto?> GetByUserIdAsync(Guid id)
     {
-        var user = await _customerReadRepository.GetByIdAsync(id);
-        if (user == null)
-        {
-            var userName = _httpContextAccessor.HttpContext.User.FindFirst(JwtRegisteredClaimNames.Name)?.Value ?? "";
-            var userEmail = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+        var customer = await _customerReadRepository.GetByAuthServiceIdAsync(id);
 
-            var customer = new Customer(id, userName, userEmail, string.Empty);
+
+        return customer?.ToDto();
+    }
+
+    public async Task<CustomerResponseDto> GetOrCreateAsync()
+    {
+        var userId = Guid.Parse(_userContext.UserId!);
+        var name = _userContext.Name ?? "Sem Nome";
+        var email = _userContext.Email ?? "sem@email.com";
+
+        var customer = await _customerReadRepository.GetByAuthServiceIdAsync(userId);
+
+        if (customer == null)
+        {
+            customer = new Customer(userId, name, email);
             await _customerWriteRepository.InsertAsync(customer);
-
-            return customer.ToDto();
         }
-
-
-
-        return user.ToDto();
-    }
-
-    public async Task<CustomerResponseDto> CreateAsync(CustomerRequestDto dto, Guid userId, string userName, string userEmail)
-    {
-        dto.Validate();
-
-        if (dto.Invalid)
-        {
-            _notificationContext.AddNotifications(dto.Notifications);
-            return default!;
-        }
-
-        var customer = dto.ToEntity(userId, userName, userEmail);
-
-        await _customerWriteRepository.InsertAsync(customer);
 
         return customer.ToDto();
     }
-
-    public async Task<CustomerResponseDto> UpdateAsync(Guid customerId, Guid authServiceId, CustomerUpdateDto dto)
+    public async Task<CustomerResponseDto> UpdateAsync(Guid authServiceId, CustomerUpdateDto dto)
     {
-        var customer = await _customerReadRepository.GetByIdAndAuthServiceIdAsync(customerId, authServiceId);
+        var customer = await _customerReadRepository.GetByAuthServiceIdAsync(authServiceId);
         if (customer == null)
         {
             _notificationContext.AddNotification("Customer", "Customer not found for this user");
