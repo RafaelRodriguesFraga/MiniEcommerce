@@ -1,158 +1,128 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using DotnetBaseKit.Components.Shared.Notifications;
-using Microsoft.AspNetCore.Http;
-using Moq;
 using CustomerService.Application;
 using CustomerService.Application.DTOs;
+using CustomerService.Application.Interfaces;
 using CustomerService.Domain.Entities;
 using CustomerService.Domain.Repositories;
+using DotnetBaseKit.Components.Shared.Notifications;
+using Moq;
 
-namespace CustomerService.Tests.UnitTests.Application.Services
+namespace CustomerService.Tests.UnitTests.Application.Services;
+
+public class CustomerServiceApplicationTests
 {
-    public class CustomerServiceApplicationTests
+    private readonly Mock<ICustomerReadRepository> _readRepositoryMock;
+    private readonly Mock<ICustomerWriteRepository> _writeRepositoryMock;
+    private readonly Mock<IUserContext> _userContextMock;
+    private readonly NotificationContext _notificationContext;
+    private readonly CustomerServiceApplication _service;
+
+    public CustomerServiceApplicationTests()
     {
-        private readonly Mock<ICustomerReadRepository> _readRepositoryMock;
-        private readonly Mock<ICustomerWriteRepository> _writeRepositoryMock;
-        private readonly NotificationContext _notificationContext;
-        private readonly CustomerServiceApplication _service;
-        private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
+        _readRepositoryMock = new Mock<ICustomerReadRepository>();
+        _writeRepositoryMock = new Mock<ICustomerWriteRepository>();
+        _userContextMock = new Mock<IUserContext>();
+        _notificationContext = new NotificationContext();
 
-        public CustomerServiceApplicationTests()
+        _service = new CustomerServiceApplication(
+            _notificationContext,
+            _readRepositoryMock.Object,
+            _writeRepositoryMock.Object,
+            _userContextMock.Object
+        );
+    }
+
+    [Fact(DisplayName = "GetOrCreate should create customer when not found")]
+    public async Task GetOrCreate_Should_Create_Customer_When_NotFound()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var name = "Rafael Teste";
+        var email = "rafael@teste.com";
+
+        _userContextMock.Setup(u => u.UserId).Returns(userId.ToString());
+        _userContextMock.Setup(u => u.Name).Returns(name);
+        _userContextMock.Setup(u => u.Email).Returns(email);
+
+        _readRepositoryMock.Setup(r => r.GetByAuthServiceIdAsync(userId))
+            .ReturnsAsync((Customer?)null);
+
+        // Act
+        var result = await _service.GetOrCreateAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(userId, result.UserId);
+        Assert.Equal(email, result.Email);
+
+        // Verifica se chamou o Insert no repositório
+        _writeRepositoryMock.Verify(w => w.InsertAsync(It.IsAny<Customer>()), Times.Once);
+    }
+
+    [Fact(DisplayName = "GetOrCreate should return existing customer when found")]
+    public async Task GetOrCreate_Should_Return_Existing_Customer()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var existingCustomer = new Customer(userId, "Nome Antigo", "email@antigo.com", "avatar.png");
+
+        _userContextMock.Setup(u => u.UserId).Returns(userId.ToString());
+
+        // Simulando que o banco ENCONTROU o cliente
+        _readRepositoryMock.Setup(r => r.GetByAuthServiceIdAsync(userId))
+            .ReturnsAsync(existingCustomer);
+
+        // Act
+        var result = await _service.GetOrCreateAsync();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Nome Antigo", result.Name); // Deve manter o nome do banco, não do token
+
+        // Garante que NÃO tentou criar de novo
+        _writeRepositoryMock.Verify(w => w.InsertAsync(It.IsAny<Customer>()), Times.Never);
+    }
+
+    [Fact(DisplayName = "GetOrCreate should return error when UserContext is invalid")]
+    public async Task GetOrCreate_Should_Return_Error_When_UserId_Invalid()
+    {
+        // Arrange
+        _userContextMock.Setup(u => u.UserId).Returns(Guid.Empty.ToString()); // Token inválido
+
+        // Act
+        var result = await _service.GetOrCreateAsync();
+
+        // Assert
+        Assert.Null(result); // Ou default
+        Assert.True(_notificationContext.HasNotifications);
+        Assert.Contains(_notificationContext.Notifications, n => n.Message == "UserId is invalid");
+    }
+
+    [Fact(DisplayName = "Update should update customer successfully")]
+    public async Task Update_Should_Update_Customer_Successfully()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var customer = new Customer(userId, "Old Name", "old@email.com", null);
+
+        var updateDto = new CustomerUpdateDto
         {
-            _readRepositoryMock = new Mock<ICustomerReadRepository>();
-            _writeRepositoryMock = new Mock<ICustomerWriteRepository>();
-            _notificationContext = new NotificationContext();
-            _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Name, "Test User"),
-                new Claim(ClaimTypes.Email, "test@example.com")
-            };
+            Name = "New Name",
+            Email = "new@email.com",
+            AvatarUrl = "http://avatar.com/new.png"
+        };
 
-            var identity = new ClaimsIdentity(claims, "TestAuthType");
-            var claimsPrincipal = new ClaimsPrincipal(identity);
+        _userContextMock.Setup(u => u.UserId).Returns(userId.ToString());
 
-            var httpContext = new DefaultHttpContext
-            {
-                User = claimsPrincipal
-            };
+        _readRepositoryMock.Setup(r => r.GetByAuthServiceIdAsync(userId))
+            .ReturnsAsync(customer);
 
-            _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+        // Act
+        var result = await _service.UpdateAsync(userId, updateDto);
 
-            _service = new CustomerServiceApplication(
-                _notificationContext,
-                _readRepositoryMock.Object,
-                _writeRepositoryMock.Object,
-                _httpContextAccessorMock.Object
-            );
-        }
+        // Assert
+        Assert.Equal("New Name", result.Name);
+        Assert.Equal("new@email.com", result.Email);
 
-        [Fact(DisplayName = "Should Create Customer When User Not Found")]
-        public async Task Should_Create_Customer_When_User_Not_Found()
-        {
-            var userId = Guid.NewGuid();
-            _readRepositoryMock.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync((Customer?)null);
-
-            var result = await _service.GetByUserIdAsync(userId);
-
-            Assert.NotNull(result);
-        }
-
-        [Fact(DisplayName = "Should Add Notification When User Not Found On Update")]
-        public async Task Should_Add_Notification_When_User_NotFound_OnUpdate()
-        {
-            var userId = Guid.NewGuid();
-            var dto = new CustomerUpdateDto { Name = "New Name" };
-
-            _readRepositoryMock.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync((Customer?)null);
-
-            var result = await _service.UpdateAsync(userId, dto);
-
-            Assert.True(_notificationContext.HasNotifications);
-            Assert.Contains(_notificationContext.Notifications,
-                n => n.Key == "User" && n.Message == "User Not found");
-            _writeRepositoryMock.Verify(w => w.UpdateAsync(It.IsAny<Customer>()), Times.Never);
-            Assert.Null(result);
-        }
-
-        [Fact(DisplayName = "Should Create User Profile Successfully")]
-        public async Task Should_Create_Customer_Successfully()
-        {
-            var dto = new CustomerRequestDto
-            {
-                AvatarUrl = "https://example.com/avatar.png"
-            };
-
-            var userId = Guid.NewGuid();
-            var userName = "Test User";
-            var userEmail = "test@example.com";
-
-            _writeRepositoryMock.Setup(w => w.InsertAsync(It.IsAny<Customer>())).Returns(Task.CompletedTask);
-
-            var result = await _service.CreateAsync(dto, userId, userName, userEmail);
-
-            Assert.NotNull(result);
-            Assert.Equal(userId, result.UserId);
-            Assert.Equal(userName, result.Name);
-            Assert.Equal(userEmail, result.Email);
-            Assert.Equal(dto.AvatarUrl, result.AvatarUrl);
-
-            _writeRepositoryMock.Verify(w => w.InsertAsync(It.IsAny<Customer>()), Times.Once);
-        }
-
-        [Fact(DisplayName = "Should Add Notification When DTO Is Invalid On Create")]
-        public async Task Should_Add_Notification_When_DTO_Is_Invalid_On_Create()
-        {
-            var dto = new CustomerRequestDto
-            {
-                AvatarUrl = "invalid-url"
-            };
-
-            var userId = Guid.NewGuid();
-            var userName = "Test User";
-            var userEmail = "test@example.com";
-
-            var result = await _service.CreateAsync(dto, userId, userName, userEmail);
-
-            Assert.Null(result);
-
-            Assert.True(_notificationContext.HasNotifications);
-            Assert.Contains(_notificationContext.Notifications, n => n.Key == "Name" || n.Key == "Email" || n.Key == "AvatarUrl");
-
-            _writeRepositoryMock.Verify(w => w.InsertAsync(It.IsAny<Customer>()), Times.Never);
-        }
-
-        [Fact(DisplayName = "Should Update User Profile Successfully")]
-        public async Task Should_Update_Customer_Successfully()
-        {
-            var userId = Guid.NewGuid();
-            var existingProfile = new Customer
-            {
-                AuthServiceId = userId,
-                Name = "Old Name",
-                Email = "old@example.com",
-                AvatarUrl = "https://old.com/avatar.png"
-            };
-
-            var dto = new CustomerUpdateDto
-            {
-                Name = "New Name",
-                Email = "new@example.com",
-                AvatarUrl = "https://new.com/avatar.png"
-            };
-
-            _readRepositoryMock.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(existingProfile);
-            _writeRepositoryMock.Setup(w => w.UpdateAsync(existingProfile)).Returns(Task.CompletedTask);
-
-            var result = await _service.UpdateAsync(userId, dto);
-
-            Assert.NotNull(result);
-            Assert.Equal(dto.Name, result.Name);
-            Assert.Equal(dto.Email, result.Email);
-            Assert.Equal(dto.AvatarUrl, result.AvatarUrl);
-
-            _writeRepositoryMock.Verify(w => w.UpdateAsync(existingProfile), Times.Once);
-        }
+        _writeRepositoryMock.Verify(w => w.UpdateAsync(It.Is<Customer>(c => c.Name == "New Name")), Times.Once);
     }
 }
