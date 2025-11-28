@@ -51,3 +51,4 @@ CustomerService/CustomerService.sln.DotSettings.user
 Commons/bin
 Commons/obj
 Commons/.idea
+CustomerService/CustomerService.Api/private_key.pem
