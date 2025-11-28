@@ -5,5 +5,5 @@ namespace CustomerService.Domain.Repositories;
 
 public interface ICustomerReadRepository : IBaseReadRepository<Customer>
 {
-    Task<Customer?> GetByIdAndAuthServiceIdAsync(Guid customerId, Guid authServiceId);
+    Task<Customer?> GetByAuthServiceIdAsync(Guid authServiceId);
 }
