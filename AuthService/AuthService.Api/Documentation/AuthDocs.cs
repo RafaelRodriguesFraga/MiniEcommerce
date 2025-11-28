@@ -18,7 +18,6 @@ public class AuthDocs : BaseDoc<AuthDocKey>
             summary: "Authenticate user",
             description: "Returns access and refresh tokens")
         {
-            RequestExample = new LoginRequestDto { Email = "admin@teste.com", Password = "senha_segura" },
             Responses = new[]
             {
                 CommonResponsesDoc.Success,
