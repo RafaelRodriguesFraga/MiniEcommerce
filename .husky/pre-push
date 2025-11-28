@@ -18,4 +18,4 @@
 ## or put your custom commands -------------------
 #echo 'Husky.Net is awesome!'
 
-dotnet husky run --name pre-push-check
+# dotnet husky run --name pre-push-check

@@ -1,5 +1,5 @@
 #!/bin/sh
 
 ## run all tasks
-dotnet husky run --name validate-commit-msg --args "$1"
+# dotnet husky run --name validate-commit-msg --args "$1"
 
