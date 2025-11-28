@@ -5,9 +5,9 @@ namespace CustomerService.Application.Extensions;
 
 public static class AddressExtensions
 {
-    public static AddressEntity ToEntity(this AddressRequestDto dto)
+    public static AddressEntity ToEntity(this AddressRequestDto dto, Guid customerId)
     {
-        return new AddressEntity(dto.CustomerId, dto.Street, dto.Number, dto.Complement, dto.Neighborhood, dto.City, dto.State, dto.PostalCode);
+        return new AddressEntity(customerId, dto.Street, dto.Number, dto.Complement, dto.Neighborhood, dto.City, dto.State, dto.PostalCode);
     }
 
     public static AddressResponseDto ToDto(this AddressEntity entity)
