@@ -5,9 +5,9 @@ namespace CustomerService.Application.Address;
 
 public interface IAddressServiceApplication : IBaseServiceApplication
 {
-    Task<IEnumerable<AddressResponseDto>> GetByCustomerIdAsync(Guid customerId);
-    Task<AddressResponseDto> GetByIdAsync(Guid id);
-    Task CreateAsync(AddressRequestDto dto);
-    Task UpdateAsync(Guid id, AddressUpdateDto dto);
-    Task DeleteAsync(Guid id);
+    Task<IEnumerable<AddressResponseDto>> GetByCustomerIdAsync(Guid myUserId);
+    Task<AddressResponseDto> GetByIdAsync(Guid id, Guid myUserId);
+    Task CreateAsync(AddressRequestDto dto, Guid myUserId);
+    Task UpdateAsync(Guid id, AddressUpdateDto dto, Guid myUserId);
+    Task DeleteAsync(Guid id, Guid myUserId);
 }
