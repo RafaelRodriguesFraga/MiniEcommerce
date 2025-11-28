@@ -8,7 +8,7 @@ public class Customer : BaseEntity
     {
 
     }
-    public Customer(Guid authServiceId, string name, string email, string avatarUrl)
+    public Customer(Guid authServiceId, string name, string email, string? avatarUrl = null)
     {
         AuthServiceId = authServiceId;
         Name = name;
@@ -17,14 +17,12 @@ public class Customer : BaseEntity
         CreatedAt = DateTime.Now;
         UpdatedAt = DateTime.Now;
     }
-
     public Guid AuthServiceId { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
-    public string AvatarUrl { get; set; }
+    public string? AvatarUrl { get; set; }
     public DateTime UpdatedAt { get; set; }
     public List<Address> Addresses = new List<Address>();
-
     public override void Validate()
     {
     }
