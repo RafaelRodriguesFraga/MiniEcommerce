@@ -10,6 +10,9 @@ using CustomerService.Infra.Context;
 using CustomerService.Infra.Extensions;
 using System.Text.Json;
 using CustomerService.Api.Documentation.Configuration;
+using System.Security.Cryptography;
+using CustomerService.Application.Interfaces;
+using CustomerService.Infra.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -68,18 +71,25 @@ builder.Services.AddApplication();
 builder.Services.AddDbContext<CustomerContext>(configuration);
 builder.Services.AddRepositories();
 builder.Services.AddApplicationServices();
-
+builder.Services.AddScoped<IUserContext, UserContext>();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        var secret = builder.Configuration.GetSection("TokenSettings:Secret").Value;
+
+        var publicKey = File.ReadAllText(builder.Configuration["JwtSettings:PublicKeyPath"])
+                        ?? File.ReadAllText("public_key.pem");
+
+        var rsa = RSA.Create();
+        rsa.ImportFromPem(publicKey);
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret))
+            IssuerSigningKey = new RsaSecurityKey(rsa),
+            ClockSkew = TimeSpan.Zero
         };
     });
 
