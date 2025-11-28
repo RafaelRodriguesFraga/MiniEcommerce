@@ -38,7 +38,12 @@ public class CustomerServiceApplication : BaseServiceApplication, ICustomerServi
 
     public async Task<CustomerResponseDto> GetOrCreateAsync()
     {
-        var userId = Guid.Parse(_userContext.UserId!);
+        var userId = Guid.Parse(_userContext.UserId);
+        if (userId == Guid.Empty)
+        {
+            _notificationContext.AddNotification("Guid", "UserId is invalid");
+            return default!;
+        }
         var name = _userContext.Name ?? "Sem Nome";
         var email = _userContext.Email ?? "sem@email.com";
 
