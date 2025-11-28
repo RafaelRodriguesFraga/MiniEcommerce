@@ -7,34 +7,13 @@ namespace CustomerService.Application.Validations
     {
         public CustomerRequestDtoContract()
         {
-            RuleFor(x => x.AvatarUrl)
-                .NotEmpty().WithMessage("Avatar URL cannot be empty.")
-                .Must(BeAValidUrl).WithMessage("Avatar URL is not valid.");
-        }
+            RuleFor(x => x.AuthServiceId)
+                .NotEmpty().WithMessage("AuthServiceId cannot be empty");
 
-        private bool BeAValidUrl(string url)
-        {
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                return false;
-            }
+            RuleFor(x => x.Name)
+                .NotEmpty().WithMessage("Name cannot be empty");
 
-            if (!Uri.TryCreate(url, UriKind.Absolute, out var uriResult))
-            {
-                return false;
-            }
 
-            if (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps)
-            {
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(uriResult.Host) || !uriResult.Host.Contains("."))
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }
