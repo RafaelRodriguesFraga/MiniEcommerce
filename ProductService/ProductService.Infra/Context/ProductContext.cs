@@ -1,17 +1,26 @@
 
+using DotnetBaseKit.Components.Infra.Sql.Context.Base;
+using DotnetBaseKit.Components.Shared.Notifications;
 using Microsoft.EntityFrameworkCore;
+using ProductService.Infra.Configurations;
 
 namespace ProductService.Infra.Context
 {
-    public class ProductContext : DbContext
+    public class ProductContext : BaseContext
     {
         public ProductContext(DbContextOptions<ProductContext> options)
             : base(options)
         {
         }
 
-        // Define DbSets for your entities here
-        // public DbSet<YourEntity> YourEntities { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Ignore<Notification>();
+
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+        }
     }
 
 }

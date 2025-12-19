@@ -1,16 +1,20 @@
+using DotnetBaseKit.Components.Api;
+using DotnetBaseKit.Components.Application;
+using DotnetBaseKit.Components.Infra.Sql;
 using ProductService.Infra.Context;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var configuration = builder.Configuration;
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
-/* Put your database options here, e.g., using SQL Server
- builder.Services.AddDbContext<BoilerplateContext>(options =>
-     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); */
-builder.Services.AddDbContext<BoilerplateContext>();
+builder.Services.AddApi();
+builder.Services.AddApplication();
+
+
+builder.Services.AddDbContext<ProductContext>(configuration);
 
 var app = builder.Build();
 

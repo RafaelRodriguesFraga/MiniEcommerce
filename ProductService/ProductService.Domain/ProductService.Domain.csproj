@@ -6,4 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+     <ItemGroup>
+        <PackageReference Include="DotnetBaseKit.Components.Domain.Sql" Version="2.1.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+    </ItemGroup>
+
+    
 </Project>
