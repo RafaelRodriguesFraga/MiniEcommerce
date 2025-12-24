@@ -1,9 +1,15 @@
+using System.Text;
+using System.Text.RegularExpressions;
 using DotnetBaseKit.Components.Domain.Sql.Entities.Base;
 
 namespace ProductService.Domain.Entities;
 
 public class Product : BaseEntity
 {
+    protected Product()
+    {
+    }
+
     public Product(string name, string description, decimal price, string sku, string category, string imageUrl)
     {
         Name = name;
@@ -38,7 +44,7 @@ public class Product : BaseEntity
         Category = category;
         ImageUrl = imageUrl;
 
-        Slug = name.ToLower().Replace(" ", "-");
+        Slug = GenerateSlug(name);
 
         UpdatedAt = DateTime.UtcNow;
     }
@@ -48,5 +54,17 @@ public class Product : BaseEntity
 
     public override void Validate()
     {
+    }
+
+    private static string GenerateSlug(string name)
+    {
+        var normalized = name
+            .ToLower()
+            .Normalize(NormalizationForm.FormD);
+
+        var slug = Regex.Replace(normalized, @"[^a-z0-9\s-]", "");
+        slug = Regex.Replace(slug, @"\s+", "-");
+
+        return slug.Trim('-');
     }
 }
