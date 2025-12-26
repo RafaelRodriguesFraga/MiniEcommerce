@@ -38,4 +38,10 @@
       <ProjectReference Include="..\CustomerService.Shared\CustomerService.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="public_key.pem">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
