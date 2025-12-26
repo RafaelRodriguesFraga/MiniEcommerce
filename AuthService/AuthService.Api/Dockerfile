@@ -7,13 +7,18 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AuthService.Api/AuthService.Api.csproj", "AuthService.Api/"]
-COPY ["AuthService.Infra/AuthService.Infra.csproj", "AuthService.Infra/"]
-COPY ["AuthService.Domain/AuthService.Domain.csproj", "AuthService.Domain/"]
-COPY ["AuthService.Application/AuthService.Application.csproj", "AuthService.Application/"]
-RUN dotnet restore "AuthService.Api/AuthService.Api.csproj"
+
+COPY ["Commons/Commons.csproj", "Commons/"]
+
+COPY ["AuthService/AuthService.Api/AuthService.Api.csproj", "AuthService/AuthService.Api/"]
+COPY ["AuthService/AuthService.Infra/AuthService.Infra.csproj", "AuthService/AuthService.Infra/"]
+COPY ["AuthService/AuthService.Domain/AuthService.Domain.csproj", "AuthService/AuthService.Domain/"]
+COPY ["AuthService/AuthService.Application/AuthService.Application.csproj", "AuthService/AuthService.Application/"]
+
+RUN dotnet restore "AuthService/AuthService.Api/AuthService.Api.csproj"
+
 COPY . .
-WORKDIR "/src/AuthService.Api"
+WORKDIR "/src/AuthService/AuthService.Api"
 RUN dotnet build "./AuthService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
