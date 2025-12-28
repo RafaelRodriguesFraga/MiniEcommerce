@@ -61,7 +61,7 @@ jobs:
       - name: Build and push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./ProductService
-          file: ./ProductService/ProductService.Api/Dockerfile
+          context: .
+          file: ProductService/ProductService.Api/Dockerfile
           push: true
           tags: ${{ steps.repo_owner.outputs.tag }}
