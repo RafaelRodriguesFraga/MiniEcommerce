@@ -11,15 +11,16 @@ WORKDIR /src
 COPY ["Commons/Commons.csproj", "Commons/"]
 
 # ProductService
-COPY ["ProductService/ProductService.Api/ProductService.Api.csproj", "ProductService.Api/"]
-COPY ["ProductService/ProductService.Application/ProductService.Application.csproj", "ProductService.Application/"]
-COPY ["ProductService/ProductService.Domain/ProductService.Domain.csproj", "ProductService.Domain/"]
-COPY ["ProductService/ProductService.Infra/ProductService.Infra.csproj", "ProductService.Infra/"]
+COPY ["ProductService/ProductService.Api/ProductService.Api.csproj", "ProductService/ProductService.Api/"]
+COPY ["ProductService/ProductService.Application/ProductService.Application.csproj", "ProductService/ProductService.Application/"]
+COPY ["ProductService/ProductService.Domain/ProductService.Domain.csproj", "ProductService/ProductService.Domain/"]
+COPY ["ProductService/ProductService.Infra/ProductService.Infra.csproj", "ProductService/ProductService.Infra/"]
 
-RUN dotnet restore "ProductService.Api/ProductService.Api.csproj"
+RUN dotnet restore "ProductService/ProductService.Api/ProductService.Api.csproj"
 
 COPY . .
-WORKDIR "/src/ProductService.Api"
+
+WORKDIR "/src/ProductService/ProductService.Api"
 RUN dotnet build "ProductService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
