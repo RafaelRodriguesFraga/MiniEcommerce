@@ -36,6 +36,7 @@
       <ProjectReference Include="..\CustomerService.Application\CustomerService.Application.csproj" />
       <ProjectReference Include="..\CustomerService.Infra\CustomerService.Infra.csproj" />
       <ProjectReference Include="..\CustomerService.Shared\CustomerService.Shared.csproj" />
+      <ProjectReference Include="..\..\Commons\Commons.csproj" />
     </ItemGroup>
 
     <ItemGroup>
