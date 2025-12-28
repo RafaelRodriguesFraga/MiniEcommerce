@@ -34,4 +34,10 @@
       <ProjectReference Include="..\ProductService.Infra\ProductService.Infra.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="public_key.pem">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
