@@ -11,4 +11,5 @@ public interface IProductServiceApplication
     Task CreateAsync(ProductRequestDto dto);
     Task UpdateAsync(Guid id, ProductRequestDto dto);
     Task ToggleStatusAsync(Guid id);
+    Task DeleteAsync(Guid id);
 }

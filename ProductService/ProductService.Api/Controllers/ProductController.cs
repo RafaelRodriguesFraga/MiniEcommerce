@@ -48,4 +48,28 @@ public class ProductsController : ApiControllerBase
 
         return ResponseOk(product);
     }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] ProductRequestDto dto)
+    {
+        await _service.UpdateAsync(id, dto);
+
+        return CreateResponse();
+    }
+
+    [HttpPatch("{id:guid}/status")]
+    public async Task<IActionResult> ToggleStatusAsync(Guid id)
+    {
+        await _service.ToggleStatusAsync(id);
+
+        return CreateResponse();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteAsync(Guid id)
+    {
+        await _service.DeleteAsync(id);
+
+        return CreateResponse();
+    }
 }
