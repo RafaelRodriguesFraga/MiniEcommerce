@@ -5,5 +5,5 @@ namespace ProductService.Domain.Repositories;
 
 public interface IProductWriteRepository : IBaseWriteRepository<Product>
 {
-
+    Task DeleteByIdAsync(Guid id);
 }

@@ -12,6 +12,7 @@ public class ProductServiceApplication : BaseServiceApplication, IProductService
 {
     private readonly IProductReadRepository _readRepository;
     private readonly IProductWriteRepository _writeRepository;
+    
 
     public ProductServiceApplication(
         NotificationContext notificationContext,
@@ -122,5 +123,19 @@ public class ProductServiceApplication : BaseServiceApplication, IProductService
         }
 
         await _writeRepository.UpdateAsync(product);
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+
+        var product = await _readRepository.GetByIdAsync(id);
+        if (product == null)
+        {
+            _notificationContext.AddNotification("Product", "Product not found.");
+            return;
+        }
+
+
+        await _writeRepository.DeleteByIdAsync(id);
     }
 }

@@ -2,6 +2,7 @@ using ProductService.Domain.Entities;
 using ProductService.Domain.Repositories;
 using DotnetBaseKit.Components.Infra.Sql.Context.Base;
 using DotnetBaseKit.Components.Infra.Sql.Repositories.Base;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProductService.Infra.Repositories;
 
@@ -9,5 +10,12 @@ public class ProductWriteRepository : BaseWriteRepository<Product>, IProductWrit
 {
     public ProductWriteRepository(BaseContext context) : base(context)
     {
+    }
+
+    public async Task DeleteByIdAsync(Guid id)
+    {
+        await Set
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync();
     }
 }
