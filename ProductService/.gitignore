@@ -15,3 +15,4 @@ ProductService.Shared/bin/
 ProductService.Shared/obj/
 ProductService.Tests/bin/
 ProductService.Tests/obj/
+appsettings.json
