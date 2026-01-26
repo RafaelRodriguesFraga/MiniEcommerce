@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using AuthService.Application.Services.Token;
 using AuthService.Application.Settings;
+using AuthService.Domain.Enums;
 using DotnetBaseKit.Components.Shared.Notifications;
 
 namespace AuthService.Test.UnitTests.Application.Services;
@@ -11,6 +12,7 @@ public class TokenGeneratorServiceApplicationTests
     private readonly NotificationContext _notificationContext;
     private readonly TokenGeneratorServiceApplication _service;
     private readonly KeySettings _keySettings;
+    private readonly UserRole _role;
 
     public TokenGeneratorServiceApplicationTests()
     {
@@ -32,7 +34,7 @@ public class TokenGeneratorServiceApplicationTests
         var email = "test@example.com";
         var name = "Test User";
 
-        var result = _service.GenerateToken(id, email, name);
+        var result = _service.GenerateToken(id, email, name, _role);
 
         Assert.NotNull(result);
         Assert.False(string.IsNullOrEmpty(result.Token));
@@ -74,7 +76,7 @@ public class TokenGeneratorServiceApplicationTests
         var emptyKeySettings = new KeySettings();
         var serviceWithEmptyKeys = new TokenGeneratorServiceApplication(_notificationContext, emptyKeySettings);
 
-        var result = serviceWithEmptyKeys.GenerateToken(Guid.NewGuid(), "test", "test");
+        var result = serviceWithEmptyKeys.GenerateToken(Guid.NewGuid(), "test", "test", _role);
 
         Assert.Null(result);
         Assert.True(_notificationContext.HasNotifications);

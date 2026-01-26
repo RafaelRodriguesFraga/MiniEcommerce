@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using AuthService.Application.Services.Token;
 using AuthService.Application.Settings;
+using AuthService.Domain.Enums;
 using DotnetBaseKit.Components.Shared.Notifications;
 
 namespace AuthService.Test.UnitTests.Application.Services;
@@ -14,6 +15,7 @@ public class TokenValidatorServiceApplicationApplicationTests
     private readonly TokenValidatorServiceApplication _validatorService;
     private readonly KeySettings _keySettings;
     private readonly TokenGeneratorServiceApplication _generatorService;
+    private readonly UserRole _role;
 
     public TokenValidatorServiceApplicationApplicationTests()
     {
@@ -38,7 +40,7 @@ public class TokenValidatorServiceApplicationApplicationTests
     public void Should_Return_Principal_From_Expired_Token()
     {
 
-        var tokenDto = _generatorService.GenerateToken(Guid.NewGuid(), "test@test.com", "Test User");
+        var tokenDto = _generatorService.GenerateToken(Guid.NewGuid(), "test@test.com", "Test User", UserRole.Admin);
 
 
         var principal = _validatorService.GetPrincipalFromExpiredToken(tokenDto.Token);
@@ -67,7 +69,7 @@ public class TokenValidatorServiceApplicationApplicationTests
         using var invalidRsa = RSA.Create(2048);
         var invalidKeySettings = new KeySettings { PrivateKey = invalidRsa.ExportRSAPrivateKeyPem() };
         var invalidGenerator = new TokenGeneratorServiceApplication(new NotificationContext(), invalidKeySettings);
-        var invalidToken = invalidGenerator.GenerateToken(Guid.NewGuid(), "fake", "fake");
+        var invalidToken = invalidGenerator.GenerateToken(Guid.NewGuid(), "fake", "fake", _role);
 
 
         var principal = _validatorService.GetPrincipalFromExpiredToken(invalidToken.Token);
