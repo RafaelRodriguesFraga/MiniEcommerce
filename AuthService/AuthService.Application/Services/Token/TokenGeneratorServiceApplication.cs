@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using AuthService.Application.DTOs;
 using AuthService.Application.Settings;
+using AuthService.Domain.Enums;
 using AuthService.Shared;
 using DotnetBaseKit.Components.Application.Base;
 using DotnetBaseKit.Components.Shared.Notifications;
@@ -18,7 +19,7 @@ public class TokenGeneratorServiceApplication : BaseServiceApplication, ITokenGe
         _keySettings = keySettings;
     }
 
-    public TokenDto GenerateToken(Guid id, string email, string name)
+    public TokenDto GenerateToken(Guid id, string email, string name, UserRole role)
     {
         var privateKeyText = _keySettings.PrivateKey;
         if (string.IsNullOrEmpty(privateKeyText))
@@ -44,7 +45,9 @@ public class TokenGeneratorServiceApplication : BaseServiceApplication, ITokenGe
                 new Claim(JwtRegisteredClaimNames.Email, email),
                 new Claim(JwtRegisteredClaimNames.Name, name),
                 new Claim(ClaimTypes.NameIdentifier, id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                new Claim(ClaimTypes.Role, role.ToString())
             }),
 
             Expires = date.AddHours(2),
@@ -71,6 +74,7 @@ public class TokenGeneratorServiceApplication : BaseServiceApplication, ITokenGe
             Name = name,
             Token = token,
             RefreshToken = refreshToken,
+            Role = role.ToString(),
             ExpirationDate = tokenDescriptor.Expires.Value,
             IssuedAt = tokenDescriptor.IssuedAt.Value,
         };

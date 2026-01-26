@@ -1,3 +1,4 @@
+using AuthService.Domain.Enums;
 using DotnetBaseKit.Components.Domain.Sql.Entities.Base;
 
 namespace AuthService.Domain.Entities;
@@ -8,6 +9,7 @@ public class User : BaseEntity
     public string Email { get; private set; } = string.Empty;
     public string Password { get; private set; } = string.Empty;
     public DateTime UpdatedAt { get; private set; }
+    public UserRole Role { get; set; }
 
     public User()
     {

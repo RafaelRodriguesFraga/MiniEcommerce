@@ -3,6 +3,7 @@ using System.Security.Claims;
 using AuthService.Application.DTOs;
 using AuthService.Application.Services.Token;
 using AuthService.Application.Services.Token.Facade;
+using AuthService.Domain.Enums;
 using AuthService.Domain.Repositories;
 using DotnetBaseKit.Components.Shared.Notifications;
 using Moq;
@@ -20,6 +21,7 @@ public class TokenFacadeTests
     private readonly Guid _userId = Guid.NewGuid();
     private readonly string _email = "test@example.com";
     private readonly string _name = "Test User";
+    private readonly UserRole _role = UserRole.Admin;
 
     public TokenFacadeTests()
     {
@@ -40,14 +42,14 @@ public class TokenFacadeTests
     public async Task GenerateAndSaveTokensAsync_Should_Call_Generator_And_Repository()
     {
         var fakeTokenDto = new TokenDto { RefreshToken = "fake-refresh-token" };
-        _generatorMock.Setup(g => g.GenerateToken(_userId, _email, _name))
+        _generatorMock.Setup(g => g.GenerateToken(_userId, _email, _name, _role))
             .Returns(fakeTokenDto);
 
-        var result = await _facade.GenerateAndSaveTokensAsync(_userId, _email, _name);
+        var result = await _facade.GenerateAndSaveTokensAsync(_userId, _email, _name, _role);
 
         Assert.Equal(fakeTokenDto, result);
 
-        _generatorMock.Verify(g => g.GenerateToken(_userId, _email, _name), Times.Once);
+        _generatorMock.Verify(g => g.GenerateToken(_userId, _email, _name, _role), Times.Once);
 
         _repositoryMock.Verify(r => r.SaveRefreshTokenAsync(
             _userId,

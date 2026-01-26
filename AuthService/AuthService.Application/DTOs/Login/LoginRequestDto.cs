@@ -1,5 +1,6 @@
 using DotnetBaseKit.Components.Shared.Notifications;
 using AuthService.Application.Validations;
+using AuthService.Domain.Enums;
 
 namespace AuthService.Application.DTOs.Login;
 
@@ -7,7 +8,6 @@ public class LoginRequestDto : Notifiable<Notification>
 {
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-
     public void Validate()
     {
         var validator = new LoginRequestDtoContract();

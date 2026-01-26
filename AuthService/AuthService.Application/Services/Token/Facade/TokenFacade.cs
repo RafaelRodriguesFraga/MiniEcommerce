@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AuthService.Application.DTOs;
+using AuthService.Domain.Enums;
 using AuthService.Domain.Repositories;
 using DotnetBaseKit.Components.Application.Base;
 using DotnetBaseKit.Components.Shared.Notifications;
@@ -24,9 +25,9 @@ public class TokenFacade : BaseServiceApplication, ITokenFacade
         _redisRefreshTokenRepository = redisRefreshTokenRepository;
     }
 
-    public async Task<TokenDto> GenerateAndSaveTokensAsync(Guid userId, string email, string name)
+    public async Task<TokenDto> GenerateAndSaveTokensAsync(Guid userId, string email, string name, UserRole role)
     {
-        var tokenDto = _tokenGenerator.GenerateToken(userId, email, name);
+        var tokenDto = _tokenGenerator.GenerateToken(userId, email, name, role);
 
         await _redisRefreshTokenRepository.SaveRefreshTokenAsync(userId, tokenDto.RefreshToken, _refreshTokenExpiry);
 
