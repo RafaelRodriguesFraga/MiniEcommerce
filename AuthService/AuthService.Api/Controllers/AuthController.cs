@@ -67,7 +67,7 @@ public class AuthController : ApiControllerBase
             return ResponseBadRequest(user);
         }
 
-        var tokenDto = await _tokenFacade.GenerateAndSaveTokensAsync(user.Id, user.Email, user.Name);
+        var tokenDto = await _tokenFacade.GenerateAndSaveTokensAsync(user.Id, user.Email, user.Name, user.Role);
 
         return ResponseOk(tokenDto);
     }
