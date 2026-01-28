@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using ProductService.Application.Services;
 using DotnetBaseKit.Components.Api.Base;
 using DotnetBaseKit.Components.Api.Responses;
-using ProductService.Application.DTOs;
 
-namespace ProductService.Api.Controllers;
+
+namespace ProductService.Api.Controllers.Public;
 
 [Route("api/products")]
 [ApiController]
@@ -19,13 +19,6 @@ public class ProductsController : ApiControllerBase
         _service = service;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] ProductRequestDto dto)
-    {
-        await _service.CreateAsync(dto);
-        return ResponseCreated();
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetAllAsync([FromQuery] int page = 1, [FromQuery] int size = 10)
     {
@@ -37,7 +30,7 @@ public class ProductsController : ApiControllerBase
     public async Task<IActionResult> GetByIdAsync(Guid id)
     {
         var product = await _service.GetByIdAsync(id);
-        
+
         return ResponseOk(product);
     }
 
@@ -47,29 +40,5 @@ public class ProductsController : ApiControllerBase
         var product = await _service.GetBySlugAsync(slug);
 
         return ResponseOk(product);
-    }
-
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] ProductRequestDto dto)
-    {
-        await _service.UpdateAsync(id, dto);
-
-        return CreateResponse();
-    }
-
-    [HttpPatch("{id:guid}/status")]
-    public async Task<IActionResult> ToggleStatusAsync(Guid id)
-    {
-        await _service.ToggleStatusAsync(id);
-
-        return CreateResponse();
-    }
-
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteAsync(Guid id)
-    {
-        await _service.DeleteAsync(id);
-
-        return CreateResponse();
     }
 }

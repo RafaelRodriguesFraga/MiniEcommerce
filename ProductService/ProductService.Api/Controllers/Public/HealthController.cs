@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ProductService.Api.Controllers;
+namespace ProductService.Api.Controllers.Public;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/health")]
 public class HealthController : ControllerBase
 {
     [HttpGet]
