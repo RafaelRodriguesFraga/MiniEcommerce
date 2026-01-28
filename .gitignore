@@ -52,3 +52,4 @@ Commons/bin
 Commons/obj
 Commons/.idea
 CustomerService/CustomerService.Api/private_key.pem
+AuthService/obj/ProductService.Infra.EntityFrameworkCore.targets
