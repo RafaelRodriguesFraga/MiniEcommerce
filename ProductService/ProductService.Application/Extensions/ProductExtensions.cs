@@ -17,8 +17,8 @@ namespace ProductService.Application.Extensions
                 Slug = entity.Slug,
                 Price = entity.Price,
                 ImageUrl = entity.ImageUrl,
-                Category = entity.Category,
-                Active = entity.Active
+                Active = entity.Active,
+                CategoryId = entity.CategoryId,
             };
         }
 
@@ -29,7 +29,7 @@ namespace ProductService.Application.Extensions
                 dto.Description,
                 dto.Price,
                 dto.Sku,
-                dto.Category,
+                dto.CategoryId,
                 dto.ImageUrl
             );
         }
