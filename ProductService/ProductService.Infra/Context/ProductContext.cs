@@ -20,6 +20,7 @@ namespace ProductService.Infra.Context
             modelBuilder.Ignore<Notification>();
 
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         }
     }
 

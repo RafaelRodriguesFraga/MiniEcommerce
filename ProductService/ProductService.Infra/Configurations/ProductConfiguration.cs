@@ -21,13 +21,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(x => x.Description)
             .IsRequired()
-            .HasMaxLength(1000) 
+            .HasMaxLength(1000)
             .HasColumnName("description");
-
-        builder.Property(x => x.Category)
-            .IsRequired()
-            .HasMaxLength(50)
-            .HasColumnName("category");
 
         builder.Property(x => x.ImageUrl)
             .IsRequired()
@@ -46,12 +41,22 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(x => x.Price)
             .IsRequired()
-            .HasPrecision(18, 2) 
+            .HasPrecision(18, 2)
             .HasColumnName("price");
 
         builder.Property(x => x.Active)
             .IsRequired()
             .HasColumnName("active");
+
+        builder.Property(x => x.CategoryId)
+            .IsRequired()
+            .HasColumnName("category_id");
+
+        builder.HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("FK_Products_Categories");
 
         builder.Property(x => x.CreatedAt)
             .IsRequired()
@@ -64,7 +69,9 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasIndex(x => x.Sku).IsUnique();
         builder.HasIndex(x => x.Slug).IsUnique();
 
+
+
         builder.ToTable("products");
-        
+
     }
 }

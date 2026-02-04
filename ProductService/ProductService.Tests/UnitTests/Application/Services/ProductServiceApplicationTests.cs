@@ -31,10 +31,12 @@ public class ProductServiceApplicationTests
     [Fact(DisplayName = "GetByIdAsync should return dto when found")]
     public async Task GetByIdAsync_Should_Return_Dto_When_Found()
     {
-        
+
         var id = Guid.NewGuid();
-        var product = new Product("Name", "Desc", 10, "SKU1", "Cat", "img.png");
-        
+        var categoryId = Guid.NewGuid();
+
+        var product = new Product("Name", "Desc", 10, "SKU1", categoryId, "img.png");
+
         _readRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(product);
 
         var result = await _service.GetByIdAsync(id);
@@ -58,8 +60,9 @@ public class ProductServiceApplicationTests
     public async Task GetBySlugAsync_Should_Return_Dto_When_Found()
     {
         var slug = "test-product";
-        var product = new Product("Test Product", "Desc", 10, "SKU1", "Cat", "img.png");
-        
+        var categoryId = Guid.NewGuid();
+        var product = new Product("Test Product", "Desc", 10, "SKU1", categoryId, "img.png");
+
         _readRepositoryMock.Setup(r => r.GetBySlugAsync(slug)).ReturnsAsync(product);
 
         var result = await _service.GetBySlugAsync(slug);
@@ -85,9 +88,10 @@ public class ProductServiceApplicationTests
     [Fact(DisplayName = "CreateAsync should notify when SKU already exists")]
     public async Task CreateAsync_Should_Notify_When_Sku_Already_Exists()
     {
+        var categoryId = Guid.NewGuid();
         var dto = new ProductRequestDto 
         { 
-            Name = "New", Price = 10, Sku = "EXISTING-SKU", Category = "C", ImageUrl = "U", Description = "D" 
+            Name = "New", Price = 10, Sku = "EXISTING-SKU", CategoryId = categoryId, ImageUrl = "U", Description = "D" 
         };
 
         _readRepositoryMock.Setup(r => r.ExistsBySkuAsync(dto.Sku)).ReturnsAsync(true);
@@ -103,9 +107,10 @@ public class ProductServiceApplicationTests
     [Fact(DisplayName = "CreateAsync should notify when slug exists")]
     public async Task CreateAsync_Should_Notify_When_Slug_Exists()
     {
+        var categoryId = Guid.NewGuid();
         var dto = new ProductRequestDto 
         { 
-            Name = "Iphone 15", Price = 10, Sku = "NEW-SKU", Category = "C", ImageUrl = "U", Description = "D" 
+            Name = "Iphone 15", Price = 10, Sku = "NEW-SKU", CategoryId = categoryId, ImageUrl = "U", Description = "D" 
         };
 
         _readRepositoryMock.Setup(r => r.ExistsBySkuAsync(dto.Sku)).ReturnsAsync(false);
@@ -121,9 +126,10 @@ public class ProductServiceApplicationTests
     [Fact(DisplayName = "CreateAsync should create when valid")]
     public async Task CreateAsync_Should_Create_When_Valid()
     {
+        var categoryId = Guid.NewGuid();
         var dto = new ProductRequestDto 
         { 
-            Name = "Valid Product", Price = 10, Sku = "VALID-SKU", Category = "C", ImageUrl = "U", Description = "D" 
+            Name = "Valid Product", Price = 10, Sku = "VALID-SKU", CategoryId = categoryId, ImageUrl = "U", Description = "D" 
         };
 
         _readRepositoryMock.Setup(r => r.ExistsBySkuAsync(dto.Sku)).ReturnsAsync(false);
@@ -150,7 +156,8 @@ public class ProductServiceApplicationTests
     public async Task UpdateAsync_Should_Notify_When_NewSku_Exists()
     {
         var id = Guid.NewGuid();
-        var existingProduct = new Product("Old Name", "Desc", 10, "OLD-SKU", "Cat", "img");
+        var categoryId = Guid.NewGuid();
+        var existingProduct = new Product("Old Name", "Desc", 10, "OLD-SKU", categoryId, "img");
 
         var dto = new ProductRequestDto { Sku = "ANOTHER-SKU" };
         
@@ -168,16 +175,17 @@ public class ProductServiceApplicationTests
     public async Task UpdateAsync_Should_Update_Successfully()
     {
         var id = Guid.NewGuid();
-        var existingProduct = new Product("Old Name", "Desc", 10, "OLD-SKU", "Cat", "img");
-        
-        var dto = new ProductRequestDto 
-        { 
-            Name = "New Name", 
-            Description = "New Desc", 
-            Price = 20, 
-            Sku = "OLD-SKU", 
-            Category = "New Cat", 
-            ImageUrl = "new.jpg" 
+        var categoryId = Guid.NewGuid();
+        var existingProduct = new Product("Old Name", "Desc", 10, "OLD-SKU", categoryId, "img");
+
+        var dto = new ProductRequestDto
+        {
+            Name = "New Name",
+            Description = "New Desc",
+            Price = 20,
+            Sku = "OLD-SKU",
+            CategoryId = categoryId,
+            ImageUrl = "new.jpg"
         };
 
         _readRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(existingProduct);
@@ -194,7 +202,8 @@ public class ProductServiceApplicationTests
     public async Task ToggleStatusAsync_Should_Toggle_Status()
     {
         var id = Guid.NewGuid();
-        var product = new Product("Name", "Desc", 10, "SKU", "Cat", "img"); 
+        var categoryId = Guid.NewGuid();
+        var product = new Product("Name", "Desc", 10, "SKU", categoryId, "img");
 
         _readRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(product);
 
@@ -211,7 +220,8 @@ public class ProductServiceApplicationTests
     public async Task DeleteAsync_Should_Call_Repository_When_Found()
     {
         var id = Guid.NewGuid();
-        var product = new Product("Name", "Desc", 10, "SKU", "Cat", "img");
+        var categoryId = Guid.NewGuid();
+        var product = new Product("Name", "Desc", 10, "SKU", categoryId, "img");
 
         _readRepositoryMock.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(product);
 
