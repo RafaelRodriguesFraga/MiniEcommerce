@@ -38,6 +38,16 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("RedisConnection") ?? "authservice-cache:6379";
 });
+    
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontEnd", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // Apenas seu Front
+              .AllowAnyMethod()                     // Permite GET, POST, PUT, DELETE, etc.
+              .AllowAnyHeader();                    // Permite enviar token no Header
+    });
+});
 
 var app = builder.Build();
 
@@ -52,6 +62,7 @@ app.MapGet("/", context =>
 
 app.UseHttpLoggingMiddleware();
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontEnd");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
