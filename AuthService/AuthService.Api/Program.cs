@@ -25,6 +25,16 @@ builder.Services.AddDbContext<AuthContext>(configuration);
 builder.Services.AddCustomAuthentication(configuration);
 builder.Services.AddServices();
 builder.Services.AddCustomSwagger();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var keySettings = new KeySettings
 {
@@ -52,6 +62,8 @@ app.MapGet("/", context =>
 
 app.UseHttpLoggingMiddleware();
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
