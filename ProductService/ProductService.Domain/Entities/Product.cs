@@ -6,17 +6,17 @@ namespace ProductService.Domain.Entities;
 
 public class Product : BaseEntity
 {
-    protected Product()
+    public Product()
     {
     }
 
-    public Product(string name, string description, decimal price, string sku, string category, string imageUrl)
+    public Product(string name, string description, decimal price, string sku, Guid categoryId, string imageUrl)
     {
         Name = name;
         Description = description;
         Price = price;
         Sku = sku.ToUpper();
-        Category = category;
+        CategoryId = categoryId;
         ImageUrl = imageUrl;
         Active = true;
 
@@ -30,18 +30,21 @@ public class Product : BaseEntity
     public string Description { get; private set; }
     public string Sku { get; private set; }
     public string Slug { get; private set; }
-    public string Category { get; private set; }
     public string ImageUrl { get; private set; }
+
+    public Guid CategoryId { get; protected set; }
+    public Category Category { get; private set; }
+
     public decimal Price { get; private set; }
     public bool Active { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
-    public void Update(string name, string description, decimal price, string category, string imageUrl)
+    public void Update(string name, string description, decimal price, Guid categoryId, string imageUrl)
     {
         Name = name;
         Description = description;
         Price = price;
-        Category = category;
+        CategoryId = categoryId;
         ImageUrl = imageUrl;
 
         Slug = GenerateSlug(name);

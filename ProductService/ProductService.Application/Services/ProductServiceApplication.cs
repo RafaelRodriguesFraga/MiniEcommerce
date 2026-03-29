@@ -96,7 +96,7 @@ public class ProductServiceApplication : BaseServiceApplication, IProductService
             dto.Name,
             dto.Description,
             dto.Price,
-            dto.Category,
+            dto.CategoryId,
             dto.ImageUrl
         );
 
