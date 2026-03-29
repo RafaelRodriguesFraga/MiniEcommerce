@@ -12,4 +12,8 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AuthService.Shared\AuthService.Shared.csproj" />
+    </ItemGroup>
+
 </Project>
