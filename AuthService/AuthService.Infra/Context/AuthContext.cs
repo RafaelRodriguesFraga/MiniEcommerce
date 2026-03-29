@@ -16,7 +16,8 @@ public class AuthContext : BaseContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Ignore<Notification>();
-        
+
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new ResetPasswordTokenConfiguration());
     }
 }
