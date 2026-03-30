@@ -92,6 +92,14 @@ public class AuthController : ApiControllerBase
         return ResponseOk(tokenDto);
     }
 
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPasswordAsync([FromBody] string email)
+    {
+        await _authServiceApplication.ForgotPasswordAsync(email);
+
+        return ResponseOk(new { message = "Se o e-mail estiver cadastrado, você receberá um link de recuperação." });
+    }
+
 
     [HttpPost("reset-password")]
     [SwaggerDocumentation(typeof(AuthDocs), nameof(AuthDocKey.ResetPassword))]
