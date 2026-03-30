@@ -10,7 +10,11 @@ public static class RepositoryExtensions
     {
         services.AddScoped<IUserWriteRepository, UserWriteRepository>();
         services.AddScoped<IUserReadRepository, UserReadRepository>();
+
         services.AddScoped<IRedisRefreshTokenRepository, RedisRefreshTokenRepository>();
+
+        services.AddScoped<IResetPasswordTokenReadRepository, ResetPasswordTokenReadRepository>();
+        services.AddScoped<IResetPasswordTokenWriteRepository, ResetPasswordTokenWriteRepository>();
 
         return services;
     }
