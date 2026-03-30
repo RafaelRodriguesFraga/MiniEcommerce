@@ -1,4 +1,5 @@
 using AuthService.Application.Services.Auth;
+using AuthService.Application.Services.ResetPassword;
 using AuthService.Application.Services.Token;
 using AuthService.Application.Services.Token.Facade;
 using AuthService.Application.Services.User;
@@ -17,6 +18,9 @@ public static class ApplicationExtensions
         services.AddScoped<ITokenValidatorServiceApplication, TokenValidatorServiceApplication>();
         services.AddScoped<IJwkServiceApplication, JwkServiceApplication>();
 
+        services.AddScoped<IResetPasswordServiceApplication, ResetPasswordServiceApplication>();
+
         services.AddScoped<ITokenFacade, TokenFacade>();
+
     }
 }
