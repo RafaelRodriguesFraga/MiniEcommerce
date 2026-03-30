@@ -1,4 +1,5 @@
 using AuthService.Domain.Repositories;
+using AuthService.Shared;
 using DotnetBaseKit.Components.Application.Base;
 using DotnetBaseKit.Components.Shared.Notifications;
 
@@ -27,7 +28,9 @@ public class ResetPasswordServiceApplication : BaseServiceApplication, IResetPas
 
     public async Task ResetPasswordAsync(string token, string newPassword)
     {
-        var tokenEntity = await _tokenReadRepository.GetByTokenAsync(token);
+        var tokenHash = TokenHasher.HashToken(token);
+
+        var tokenEntity = await _tokenReadRepository.GetByTokenHashAsync(tokenHash);
 
         if (tokenEntity == null || tokenEntity.Used || tokenEntity.ExpirationDate < DateTime.UtcNow)
         {
