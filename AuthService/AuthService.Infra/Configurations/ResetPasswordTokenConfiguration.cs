@@ -35,6 +35,7 @@ public class ResetPasswordTokenConfiguration : IEntityTypeConfiguration<ResetPas
 
         builder.Property(x => x.ExpirationDate)
             .IsRequired()
+            .HasColumnType("timestamp with time zone")
             .HasColumnName("expiration_date");
 
         builder.Property(x => x.Used)
@@ -44,6 +45,7 @@ public class ResetPasswordTokenConfiguration : IEntityTypeConfiguration<ResetPas
 
         builder.Property(x => x.CreatedAt)
             .IsRequired()
+            .HasColumnType("timestamp with time zone")
             .HasColumnName("created_at");
 
         builder.ToTable("reset_password_tokens");
