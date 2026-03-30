@@ -6,6 +6,7 @@ using AuthService.Application.DTOs.Token;
 using AuthService.Application.DTOs.User;
 using AuthService.Application.Services;
 using AuthService.Application.Services.Auth;
+using AuthService.Application.Services.ResetPassword;
 using AuthService.Application.Services.Token;
 using AuthService.Application.Services.Token.Facade;
 using Commons.Swagger.Configuration;
@@ -24,18 +25,22 @@ public class AuthController : ApiControllerBase
     private readonly IAuthServiceApplication _authServiceApplication;
     private readonly ITokenFacade _tokenFacade;
     private readonly IJwkServiceApplication _jwkService;
+    private readonly IResetPasswordServiceApplication _resetPasswordServiceApplication;
 
     public AuthController(
         IResponseFactory responseFactory,
         IUserServiceApplication userServiceApplication,
         IAuthServiceApplication authServiceApplication,
-        ITokenFacade tokenFacade, IJwkServiceApplication jwkService)
+        ITokenFacade tokenFacade,
+        IJwkServiceApplication jwkService,
+        IResetPasswordServiceApplication resetPasswordServiceApplication)
         : base(responseFactory)
     {
         _userServiceApplication = userServiceApplication;
         _authServiceApplication = authServiceApplication;
         _tokenFacade = tokenFacade;
         _jwkService = jwkService;
+        _resetPasswordServiceApplication = resetPasswordServiceApplication;
     }
 
     [HttpGet(".well-known/jwks.json")]
@@ -92,7 +97,7 @@ public class AuthController : ApiControllerBase
     [SwaggerDocumentation(typeof(AuthDocs), nameof(AuthDocKey.ResetPassword))]
     public async Task<IActionResult> ResetPasswordAsync(ResetPasswordDto dto)
     {
-        await _authServiceApplication.ResetPasswordAsync(dto.Email, dto.NewPassword);
+        await _resetPasswordServiceApplication.ResetPasswordAsync(dto.Token, dto.NewPassword);
 
         return CreateResponse();
     }
