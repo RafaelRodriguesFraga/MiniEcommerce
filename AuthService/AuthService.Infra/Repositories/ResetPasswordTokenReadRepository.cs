@@ -1,5 +1,6 @@
 using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
+using AuthService.Shared;
 using DotnetBaseKit.Components.Infra.Sql.Context.Base;
 using DotnetBaseKit.Components.Infra.Sql.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,8 @@ public class ResetPasswordTokenReadRepository : BaseReadRepository<ResetPassword
 
     }
 
-    public async Task<ResetPasswordToken?> GetByTokenAsync(string token)
+    public async Task<ResetPasswordToken?> GetByTokenHashAsync(string tokenHash)
     {
-        return await Set.AsNoTracking().SingleOrDefaultAsync(u => u.TokenHash == token);
+        return await Set.AsNoTracking().SingleOrDefaultAsync(u => u.TokenHash == tokenHash);
     }
 }

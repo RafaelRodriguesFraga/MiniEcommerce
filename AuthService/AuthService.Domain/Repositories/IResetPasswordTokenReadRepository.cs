@@ -5,5 +5,5 @@ namespace AuthService.Domain.Repositories;
 
 public interface IResetPasswordTokenReadRepository : IBaseReadRepository<ResetPasswordToken>
 {
-    Task<ResetPasswordToken?> GetByTokenAsync(string token);
+    Task<ResetPasswordToken?> GetByTokenHashAsync(string tokenHash);
 }
