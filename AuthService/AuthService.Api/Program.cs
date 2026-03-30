@@ -1,6 +1,5 @@
 using AuthService.Api.Extensions;
 using AuthService.Application.Services.Extensions;
-using AuthService.Application.Services.Token;
 using AuthService.Application.Settings;
 using AuthService.Infra.Context;
 using AuthService.Infra.Extensions;
