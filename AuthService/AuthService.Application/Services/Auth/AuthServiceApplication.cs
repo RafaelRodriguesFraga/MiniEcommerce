@@ -1,5 +1,6 @@
 using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
+using AuthService.Shared;
 using DotnetBaseKit.Components.Application.Base;
 using DotnetBaseKit.Components.Shared.Notifications;
 
@@ -10,16 +11,19 @@ public class AuthServiceApplication : BaseServiceApplication, IAuthServiceApplic
     private readonly IUserReadRepository _readRepository;
     private readonly IUserWriteRepository _writeRepository;
     private readonly IResetPasswordTokenWriteRepository _tokenWriteRepository;
+    private readonly IResetPasswordTokenReadRepository _tokenReadRepository;
 
     public AuthServiceApplication(
         NotificationContext notificationContext,
         IUserWriteRepository writeRepository,
         IUserReadRepository readRepository,
-        IResetPasswordTokenWriteRepository tokenWriteRepository) : base(notificationContext)
+        IResetPasswordTokenWriteRepository tokenWriteRepository,
+        IResetPasswordTokenReadRepository tokenReadRepository) : base(notificationContext)
     {
         _writeRepository = writeRepository;
         _readRepository = readRepository;
         _tokenWriteRepository = tokenWriteRepository;
+        _tokenReadRepository = tokenReadRepository;
     }
 
     public async Task ForgotPasswordAsync(string email)
@@ -27,7 +31,6 @@ public class AuthServiceApplication : BaseServiceApplication, IAuthServiceApplic
         var user = await _readRepository.GetByEmailAsync(email);
         if (user == null)
         {
-            _notificationContext.AddNotification("User", "Usuário não encontrado");
             return;
         }
 
@@ -45,13 +48,24 @@ public class AuthServiceApplication : BaseServiceApplication, IAuthServiceApplic
 
     }
 
-    public async Task ResetPasswordAsync(string email, string newPassword)
+    public async Task ResetPasswordAsync(string email, string newPassword, string rawToken)
     {
-        var user = await _readRepository.GetByEmailAsync(email);
-        var userNotFound = user == null;
-        if (userNotFound)
+
+        var incomingHash = TokenHasher.HashToken(rawToken);
+
+        var tokenEntity = await _tokenReadRepository.GetByTokenHashAsync(incomingHash);
+
+        if (tokenEntity == null || tokenEntity.Used || tokenEntity.ExpirationDate < DateTime.UtcNow)
         {
-            _notificationContext.AddNotification("User", "User not found");
+            _notificationContext.AddNotification("Token", "Token inválido, expirado ou já utilizado.");
+            return;
+        }
+
+        var user = await _readRepository.GetByEmailAsync(email);
+
+        if (user == null || user.Id != tokenEntity.UserId)
+        {
+            _notificationContext.AddNotification("User", "Usuário não encontrado ou token não pertence a este e-mail.");
             return;
         }
 
