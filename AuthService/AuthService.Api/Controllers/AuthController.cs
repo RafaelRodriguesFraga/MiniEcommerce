@@ -1,6 +1,7 @@
 using AuthService.Api.Documentation;
 using AuthService.Api.Documentation.Keys;
 using AuthService.Application.DTOs.Auth;
+using AuthService.Application.DTOs.ForgotPassword;
 using AuthService.Application.DTOs.Login;
 using AuthService.Application.DTOs.Token;
 using AuthService.Application.DTOs.User;
@@ -93,9 +94,9 @@ public class AuthController : ApiControllerBase
     }
 
     [HttpPost("forgot-password")]
-    public async Task<IActionResult> ForgotPasswordAsync([FromBody] string email)
+    public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordRequestDto dto)
     {
-        await _authServiceApplication.ForgotPasswordAsync(email);
+        await _authServiceApplication.ForgotPasswordAsync(dto.Email);
 
         return ResponseOk(new { message = "Se o e-mail estiver cadastrado, você receberá um link de recuperação." });
     }
