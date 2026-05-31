@@ -32,7 +32,7 @@ public class CustomerController : ApiControllerBase
         _userContext = userContext;
     }
 
-    [HttpPost("me")]
+    [HttpGet("me")]
     [SwaggerDocumentation(typeof(CustomerDocs), nameof(CustomerDocKey.GetMe))]
 
     public async Task<IActionResult> GetMe()

@@ -15,7 +15,17 @@ public class CustomerDocs : BaseDoc<CustomerDocKey>
         {
             Responses = new (int, string, Type?, object?)[]
            {
-                (200, "Success", typeof(CustomerResponseDto), new CustomerResponseDto { Id = Guid.NewGuid(), Name = "Name", Email = "example@example.com", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }),
+                (200, "Customer successfully created",
+                    typeof(CustomerResponseDto),
+                    new CustomerResponseDto
+                    { Id = Guid.NewGuid(),
+                      FirstName = "Rafael",
+                      LastName = "Fraga",
+                      Email = "rafael@example.com",
+                      Cpf = "123.456.789-00",
+                      Phone = "(11) 99999-9999",
+                      AvatarUrl = "http://exampleurl.com/avatar.jpg"
+                    }),
                 CommonResponsesDoc.BadRequest,
                 CommonResponsesDoc.Unauthorized
            }
@@ -28,7 +38,18 @@ public class CustomerDocs : BaseDoc<CustomerDocKey>
             RequestExample = new { AvatarUrl = "http://exampleurl.com/avatar.jpg" },
             Responses = new (int, string, Type?, object?)[]
             {
-                (201, "Customer successfully created", typeof(CustomerResponseDto), new CustomerResponseDto { Id = Guid.NewGuid(), Name = "Rafael", Email = "rafael@example.com" }),
+                (201, "Customer successfully created",
+                    typeof(CustomerResponseDto),
+                    new CustomerResponseDto
+                    { Id = Guid.NewGuid(),
+                      FirstName = "Rafael",
+                      LastName = "Fraga",
+                      Email = "rafael@example.com",
+                      Cpf = "123.456.789-00",
+                      Phone = "(11) 99999-9999",
+                      AvatarUrl = "http://exampleurl.com/avatar.jpg"
+                    }),
+
                 CommonResponsesDoc.BadRequest,
                 CommonResponsesDoc.Unauthorized
             }

@@ -5,16 +5,20 @@ namespace CustomerService.Application.DTOs;
 
 public class CustomerRequestDto : Notifiable<Notification>
 {
-    public CustomerRequestDto(Guid authServiceId, string name, string email, string? avatarUrl = null)
+    public CustomerRequestDto(Guid authServiceId, string firstName, string lastName, string cpf, string email, string? avatarUrl = null)
     {
         AuthServiceId = authServiceId;
-        Name = name;
+        FirstName = firstName;
+        LastName = lastName;
+        Cpf = cpf;
         Email = email;
         AvatarUrl = avatarUrl;
     }
 
     public Guid AuthServiceId { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Cpf { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string? AvatarUrl { get; set; }
 

@@ -18,10 +18,15 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .IsRequired()
             .HasColumnName("auth_service_id");
 
-        builder.Property(x => x.Name)
+        builder.Property(x => x.FirstName)
             .IsRequired()
             .HasMaxLength(100)
-            .HasColumnName("name");
+            .HasColumnName("first_name");
+
+        builder.Property(x => x.LastName)
+            .IsRequired()
+            .HasMaxLength(100)
+            .HasColumnName("last_name");
 
         builder.Property(x => x.Email)
             .IsRequired()
@@ -36,12 +41,12 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 
         builder.Property(x => x.CreatedAt)
             .IsRequired()
-            .HasColumnType("timestamp without time zone")
+            .HasColumnType("timestamp with time zone")
             .HasColumnName("created_at");
 
         builder.Property(x => x.UpdatedAt)
             .IsRequired()
-            .HasColumnType("timestamp without time zone")
+            .HasColumnType("timestamp with time zone")
             .HasColumnName("updated_at");
 
         builder.ToTable("customers");

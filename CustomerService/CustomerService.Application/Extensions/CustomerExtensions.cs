@@ -5,12 +5,13 @@ namespace CustomerService.Application.Extensions;
 
 public static class CustomerExtensions
 {
-    public static Customer ToEntity(this CustomerRequestDto dto, Guid userId, string userName, string userEmail)
+    public static Customer ToEntity(this CustomerRequestDto dto, Guid userId, string firstName, string lastName, string userEmail)
     {
         return new Customer
         {
             AuthServiceId = userId,
-            Name = userName,
+            FirstName = firstName,
+            LastName = lastName,
             Email = userEmail,
             AvatarUrl = dto.AvatarUrl
         };
@@ -24,7 +25,8 @@ public static class CustomerExtensions
             UserId = entity.AuthServiceId,
             Id = entity.Id,
             Email = entity.Email,
-            Name = entity.Name,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
             AvatarUrl = entity.AvatarUrl,
             CreatedAt = entity.CreatedAt,
             UpdatedAt = entity.UpdatedAt

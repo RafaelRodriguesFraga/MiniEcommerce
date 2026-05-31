@@ -32,7 +32,6 @@ public class CustomerServiceApplication : BaseServiceApplication, ICustomerServi
     {
         var customer = await _customerReadRepository.GetByAuthServiceIdAsync(id);
 
-
         return customer?.ToDto();
     }
 
@@ -44,14 +43,27 @@ public class CustomerServiceApplication : BaseServiceApplication, ICustomerServi
             _notificationContext.AddNotification("Guid", "UserId is invalid");
             return default!;
         }
-        var name = _userContext.Name ?? "Sem Nome";
-        var email = _userContext.Email ?? "sem@email.com";
 
         var customer = await _customerReadRepository.GetByAuthServiceIdAsync(userId);
 
         if (customer == null)
         {
-            customer = new Customer(userId, name, email);
+            var nameFromToken = _userContext.Name ?? "Usuário";
+            var emailFromToken = _userContext.Email ?? "";
+            var names = nameFromToken.Split(' ', 2);
+
+            var firstName = names[0];
+            var lastName = names.Length > 1 ? names[1] : "";
+
+            customer = new Customer(
+                userId,
+                firstName,
+                lastName,
+                emailFromToken,
+                string.Empty,
+                string.Empty,
+                null);
+
             await _customerWriteRepository.InsertAsync(customer);
         }
 
@@ -66,7 +78,7 @@ public class CustomerServiceApplication : BaseServiceApplication, ICustomerServi
             return default!;
         }
 
-        customer.Update(dto.Name, dto.Email, dto.AvatarUrl);
+        customer.Update(dto.FirstName, dto.LastName, dto.Cpf, dto.Phone, dto.AvatarUrl);
 
         await _customerWriteRepository.UpdateAsync(customer);
 
