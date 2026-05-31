@@ -6,7 +6,7 @@ public class Address : BaseEntity
 {
 
     public Address(Guid customerId, string street, string number, string complement, string neighborhood, string city,
-        string state, string postalCode)
+        string state, string postalCode, bool isMain, string label)
     {
         CustomerId = customerId;
         Street = street;
@@ -16,7 +16,8 @@ public class Address : BaseEntity
         City = city;
         State = state;
         PostalCode = postalCode;
-        CreatedAt = DateTime.Now;
+        IsMain = isMain;
+        Label = label;
         UpdatedAt = DateTime.Now;
     }
 
@@ -31,8 +32,10 @@ public class Address : BaseEntity
     public string State { get; private set; } = string.Empty;
     public string PostalCode { get; private set; } = string.Empty;
     public DateTime UpdatedAt { get; private set; }
+    public string Label { get; private set; }
+    public bool IsMain { get; private set; }
 
-    public void Update(string street, string number, string complement, string neighborhood, string city, string state, string postalCode)
+    public void Update(string street, string number, string complement, string neighborhood, string city, string state, string postalCode, string label)
     {
         Street = street ?? Street;
         Number = number ?? Number;
@@ -41,8 +44,12 @@ public class Address : BaseEntity
         City = city ?? City;
         State = state ?? State;
         PostalCode = postalCode ?? PostalCode;
+        Label = label ?? Label;
         UpdatedAt = DateTime.Now;
     }
+
+    public void SetAsMain() => IsMain = true;
+    public void UnsetMain() => IsMain = false;
 
     public override void Validate()
     {

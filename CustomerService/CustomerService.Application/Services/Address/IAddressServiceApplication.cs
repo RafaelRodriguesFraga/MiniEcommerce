@@ -10,4 +10,5 @@ public interface IAddressServiceApplication : IBaseServiceApplication
     Task CreateAsync(AddressRequestDto dto, Guid myUserId);
     Task UpdateAsync(Guid id, AddressUpdateDto dto, Guid myUserId);
     Task DeleteAsync(Guid id, Guid myUserId);
+    Task SetMainAddressAsync(Guid addressId, Guid authServiceId);
 }

@@ -9,5 +9,7 @@ namespace CustomerService.Application.DTOs.Address
         public string City { get; set; } = string.Empty;
         public string State { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
+        public bool IsMain { get; set; }
+        public string Label { get; set; } = string.Empty;
     }
 }

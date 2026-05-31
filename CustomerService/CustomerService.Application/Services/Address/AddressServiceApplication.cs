@@ -18,7 +18,6 @@ public class AddressServiceApplication : BaseServiceApplication, IAddressService
         NotificationContext notificationContext,
         IAddressReadRepository addressReadRepository,
         IAddressWriteRepository addressWriteRepository,
-
         ICustomerReadRepository customerReadRepository) : base(notificationContext)
     {
         _addressReadRepository = addressReadRepository;
@@ -67,7 +66,19 @@ public class AddressServiceApplication : BaseServiceApplication, IAddressService
 
         var customerId = await ResolveCustomerIdOrNotifyAsync(myUserId);
         if (customerId == Guid.Empty)
+        {
             return;
+        }
+
+        if (dto.IsMain)
+        {
+            var currentAddresses = await _addressReadRepository.GetByCustomerIdAsync(customerId);
+            foreach (var addr in currentAddresses.Where(a => a.IsMain))
+            {
+                addr.UnsetMain();
+                await _addressWriteRepository.UpdateAsync(addr);
+            }
+        }
 
         var address = dto.ToEntity(customerId);
 
@@ -101,7 +112,8 @@ public class AddressServiceApplication : BaseServiceApplication, IAddressService
             dto.Neighborhood,
             dto.City,
             dto.State,
-            dto.PostalCode
+            dto.PostalCode,
+            dto.Label
         );
 
         await _addressWriteRepository.UpdateAsync(address);
@@ -140,5 +152,24 @@ public class AddressServiceApplication : BaseServiceApplication, IAddressService
         }
 
         return customer.Id;
+    }
+
+    public async Task SetMainAddressAsync(Guid addressId, Guid authServiceId)
+    {
+        var customerId = await ResolveCustomerIdOrNotifyAsync(authServiceId);
+
+        var addresses = await _addressReadRepository.GetByCustomerIdAsync(customerId);
+        foreach (var adress in addresses)
+        {
+            if (adress.Id == addressId)
+            {
+                adress.SetAsMain();
+            }
+            else
+            {
+                adress.UnsetMain();
+            }
+        }
+
     }
 }

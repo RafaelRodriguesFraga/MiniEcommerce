@@ -53,6 +53,16 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasColumnName("complement")
             .IsRequired(false);
 
+        builder.Property(x => x.Label)
+            .HasMaxLength(100)
+            .HasColumnName("label")
+            .IsRequired(false);
+
+        builder.Property(x => x.IsMain)
+            .IsRequired()
+            .HasDefaultValue(false)
+            .HasColumnName("is_main");
+
         builder.Property(x => x.CreatedAt)
             .IsRequired()
             .HasColumnType("timestamp without time zone")

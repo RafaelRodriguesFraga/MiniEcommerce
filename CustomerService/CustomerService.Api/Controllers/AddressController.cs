@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using CustomerService.Api.Documentation.Configuration;
 using CustomerService.Api.Documentation.Docs;
 using CustomerService.Api.Documentation.Docs.Keys;
@@ -64,6 +63,21 @@ public class AddressController : ApiControllerBase
     {
         var myUserId = Guid.Parse(_userContext.UserId!);
         await _serviceApplication.UpdateAsync(id, request, myUserId);
+
+        return CreateResponse();
+    }
+
+    [HttpPatch("{id:guid}/set-main")]
+    // [SwaggerDocumentation(typeof(AddressDocs), nameof(AddressDocKey.SetAsMain))]
+    public async Task<IActionResult> SetAsMain(Guid id)
+    {
+        var myUserId = Guid.Parse(_userContext.UserId!);
+        if (myUserId == Guid.Empty)
+        {
+            return Unauthorized();
+        }
+
+        await _serviceApplication.SetMainAddressAsync(id, myUserId);
 
         return CreateResponse();
     }

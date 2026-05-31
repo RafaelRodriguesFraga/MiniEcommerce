@@ -7,7 +7,7 @@ public static class AddressExtensions
 {
     public static AddressEntity ToEntity(this AddressRequestDto dto, Guid customerId)
     {
-        return new AddressEntity(customerId, dto.Street, dto.Number, dto.Complement, dto.Neighborhood, dto.City, dto.State, dto.PostalCode);
+        return new AddressEntity(customerId, dto.Street, dto.Number, dto.Complement, dto.Neighborhood, dto.City, dto.State, dto.PostalCode, dto.IsMain, dto.Label);
     }
 
     public static AddressResponseDto ToDto(this AddressEntity entity)
@@ -23,7 +23,9 @@ public static class AddressExtensions
             City = entity.City,
             State = entity.State,
             ZipCode = entity.PostalCode,
-            Complement = entity.Complement
+            Complement = entity.Complement,
+            IsMain = entity.IsMain,
+            Label = entity.Label,
         };
     }
 }

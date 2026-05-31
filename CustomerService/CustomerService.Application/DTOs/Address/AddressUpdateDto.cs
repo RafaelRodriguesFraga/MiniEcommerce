@@ -10,5 +10,6 @@ namespace CustomerService.Application.DTOs.Address
         public string City { get; private set; } = string.Empty;
         public string State { get; private set; } = string.Empty;
         public string PostalCode { get; private set; } = string.Empty;
+        public string Label { get; private set; } = string.Empty;
     }
 }

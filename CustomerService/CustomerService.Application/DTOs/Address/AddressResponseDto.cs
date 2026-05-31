@@ -19,5 +19,8 @@ namespace CustomerService.Application.DTOs.Address
         public string ZipCode { get; set; } = string.Empty;
 
         public string? Complement { get; set; }
+        public bool IsMain { get; set; }
+        public string Label { get; set; } = string.Empty;
+
     }
 }
